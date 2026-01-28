@@ -15,6 +15,8 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void InitPatch(DomeHud __instance)
     {
+        _ = Plugin.UpdateColors();
+        
         if (_scoreText != null)
         {
             return;
