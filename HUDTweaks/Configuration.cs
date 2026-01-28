@@ -11,6 +11,8 @@ public partial class Plugin
 
     private void RegisterConfigEntries()
     {
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
+        
         EnablePerfectPlusCount = Config.Bind("General", nameof(EnablePerfectPlusCount), false,
             "Show Perfect+ count beside accuracy");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", "Show Perfect+ count beside accuracy");
