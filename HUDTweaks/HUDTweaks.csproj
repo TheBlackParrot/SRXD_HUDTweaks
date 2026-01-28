@@ -60,8 +60,15 @@
         <Reference Include="Unity.TextMeshPro">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\Unity.TextMeshPro.dll</HintPath>
         </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+            <Publicize>true</Publicize>
+        </Reference>
         <Reference Include="UnityEngine.UI">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\UnityEngine.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="SpinCore">
+            <HintPath>$(BaseGameDir)\BepInEx\plugins\SpinCore.dll</HintPath>
         </Reference>
     </ItemGroup>
 </Project>

@@ -42,6 +42,11 @@ internal static class DomeHudPatches
         ScoreState scoreState = __instance.PlayState.scoreState;
         float accuracy = (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
 
-        _scoreTextTMP.text = $"{(float.IsNaN(accuracy) ? 100 : accuracy):0.00}% <alpha=#80>({scoreState.CurrentTotals.flawlessPlusCount})";
+        string accString = $"{(float.IsNaN(accuracy) ? 100 : accuracy):0.00}%";
+        string perfectPlusString = Plugin.EnablePerfectPlusCount.Value
+            ? $" <alpha=#80>({scoreState.CurrentTotals.flawlessPlusCount})"
+            : "";
+
+        _scoreTextTMP.text = $"{accString}{perfectPlusString}";
     }
 }
