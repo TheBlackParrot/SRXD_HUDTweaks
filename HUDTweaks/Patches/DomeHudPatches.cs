@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HarmonyLib;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace HUDTweaks.Patches;
 
@@ -12,6 +12,24 @@ internal static class DomeHudPatches
     private static CustomTextMeshPro? _scoreTextTMP;
     private static Transform? _healthText;
     private static CustomTextMeshPro? _healthTextTMP;
+
+    internal static async Task ResetTranslatedTexts()
+    {
+        if (_scoreText?.TryGetComponent(out TranslatedTextMeshPro scoreTranslatedTextMeshPro) ?? false)
+        {
+            scoreTranslatedTextMeshPro.Translation = "";
+            await Awaitable.EndOfFrameAsync();
+            scoreTranslatedTextMeshPro.Translation = "Score";
+        }
+
+        // ReSharper disable once InvertIf
+        if (_healthText?.TryGetComponent(out TranslatedTextMeshPro healthTranslatedTextMeshPro) ?? false)
+        {
+            healthTranslatedTextMeshPro.Translation = "";
+            await Awaitable.EndOfFrameAsync();
+            healthTranslatedTextMeshPro.Translation = "Health";
+        }
+    }
 
     [HarmonyPatch(typeof(PlayingTrackGameState), nameof(PlayingTrackGameState.OnBecameActive))]
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
@@ -35,19 +53,9 @@ internal static class DomeHudPatches
         
         _scoreText = __instance.number.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();
-            
-        if (_scoreText.TryGetComponent(out TranslatedTextMeshPro scoreTranslatedTextMeshPro))
-        {
-            Object.DestroyImmediate(scoreTranslatedTextMeshPro);
-        }
-
+        
         _healthText = __instance.healthBar.transform.parent.Find("HealthText");
         _healthTextTMP = _healthText.GetComponent<CustomTextMeshPro>();
-            
-        if (_healthText.TryGetComponent(out TranslatedTextMeshPro healthTranslatedTextMeshPro))
-        {
-            Object.DestroyImmediate(healthTranslatedTextMeshPro);
-        }
     }
 
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Update))]
@@ -55,27 +63,23 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void UpdatePatch(DomeHud __instance)
     {
-        if (_scoreTextTMP == null)
+        if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value)
         {
-            return;
+            ScoreState scoreState = __instance.PlayState.scoreState;
+            float accuracy = (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
+
+            string accString = $"{(float.IsNaN(accuracy) ? 100 : accuracy):0.00}%";
+            string perfectPlusString = Plugin.EnablePerfectPlusCount.Value
+                ? $" <alpha=#80>({scoreState.CurrentTotals.flawlessPlusCount})"
+                : "";
+
+            _scoreTextTMP.text = $"{accString}{perfectPlusString}";
         }
-
-        ScoreState scoreState = __instance.PlayState.scoreState;
-        float accuracy = (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
-
-        string accString = $"{(float.IsNaN(accuracy) ? 100 : accuracy):0.00}%";
-        string perfectPlusString = Plugin.EnablePerfectPlusCount.Value
-            ? $" <alpha=#80>({scoreState.CurrentTotals.flawlessPlusCount})"
-            : "";
-
-        _scoreTextTMP.text = $"{accString}{perfectPlusString}";
         
-        if (_healthTextTMP == null)
+        if (_healthTextTMP != null && Plugin.EnablePreciseHealth.Value)
         {
-            return;
+            _healthTextTMP.text = __instance.PlayState.health.ToString().PadLeft(3, '0');
         }
-
-        _healthTextTMP.text = __instance.PlayState.health.ToString().PadLeft(3, '0');
     }
 
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateTranslatedElements))]

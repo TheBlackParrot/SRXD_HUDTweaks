@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using BepInEx.Configuration;
+using HUDTweaks.Patches;
 using SpinCore.Translation;
 using SpinCore.UI;
 using UnityEngine;
@@ -16,6 +17,8 @@ public partial class Plugin
     //private static readonly Vector3 BlueHUDColor = new(0f, 0.703f, 5.283f);
     private static readonly Vector3 YellowHUDColor = new(4.977f, 0.859f, 0f);
     
+    internal static ConfigEntry<bool> EnableAccuracyDisplay = null!;
+    internal static ConfigEntry<bool> EnablePreciseHealth = null!;
     internal static ConfigEntry<bool> EnablePerfectPlusCount = null!;
     
     /*internal static ConfigEntry<Vector3> Multiplier1XColor = null!;
@@ -44,6 +47,12 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Colors", "Colors");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Extras", "Extras");
         
+        EnableAccuracyDisplay = Config.Bind("General", nameof(EnableAccuracyDisplay), false,
+            "Show the current accuracy in place of the \"SCORE\" label");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableAccuracyDisplay)}", "Replace \"SCORE\" with accuracy");
+        EnablePreciseHealth = Config.Bind("General", nameof(EnablePreciseHealth), false,
+            "Show the current exact health value in place of the \"HEALTH\" label");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePreciseHealth)}", "Replace \"HEALTH\" with health");
         EnablePerfectPlusCount = Config.Bind("General", nameof(EnablePerfectPlusCount), false,
             "Show Perfect+ count beside accuracy");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", "Show Perfect+ count beside accuracy");
@@ -278,6 +287,21 @@ public partial class Plugin
         
         UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Extras", false);
         
+        #region EnableAccuracyDisplay
+        CustomGroup enableAccuracyDisplayGroup = UIHelper.CreateGroup(modGroup, "EnableAccuracyDisplayGroup");
+        enableAccuracyDisplayGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableAccuracyDisplayGroup, nameof(EnableAccuracyDisplay),
+            $"{TRANSLATION_PREFIX}{nameof(EnableAccuracyDisplay)}", EnableAccuracyDisplay.Value, value =>
+            {
+                EnableAccuracyDisplay.Value = value;
+                
+                if (!value)
+                {
+                    _ = DomeHudPatches.ResetTranslatedTexts();
+                }
+            });
+        #endregion
+        
         #region EnablePerfectPlusCount
         CustomGroup enablePerfectPlusCountGroup = UIHelper.CreateGroup(modGroup, "EnablePerfectPlusCountGroup");
         enablePerfectPlusCountGroup.LayoutDirection = Axis.Horizontal;
@@ -285,6 +309,21 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", EnablePerfectPlusCount.Value, value =>
             {
                 EnablePerfectPlusCount.Value = value;
+            });
+        #endregion
+        
+        #region EnablePreciseHealth
+        CustomGroup enablePreciseHealthGroup = UIHelper.CreateGroup(modGroup, "EnablePreciseHealthGroup");
+        enablePreciseHealthGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enablePreciseHealthGroup, nameof(EnablePreciseHealth),
+            $"{TRANSLATION_PREFIX}{nameof(EnablePreciseHealth)}", EnablePreciseHealth.Value, value =>
+            {
+                EnablePreciseHealth.Value = value;
+
+                if (!value)
+                {
+                    _ = DomeHudPatches.ResetTranslatedTexts();
+                }
             });
         #endregion
         
