@@ -10,6 +10,8 @@ internal static class DomeHudPatches
 {
     private static Transform? _scoreText;
     private static CustomTextMeshPro? _scoreTextTMP;
+    private static Transform? _healthText;
+    private static CustomTextMeshPro? _healthTextTMP;
 
     [HarmonyPatch(typeof(PlayingTrackGameState), nameof(PlayingTrackGameState.OnBecameActive))]
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
@@ -34,9 +36,17 @@ internal static class DomeHudPatches
         _scoreText = __instance.number.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();
             
-        if (_scoreText.TryGetComponent(out TranslatedTextMeshPro translatedTextMeshPro))
+        if (_scoreText.TryGetComponent(out TranslatedTextMeshPro scoreTranslatedTextMeshPro))
         {
-            Object.DestroyImmediate(translatedTextMeshPro);
+            Object.DestroyImmediate(scoreTranslatedTextMeshPro);
+        }
+
+        _healthText = __instance.healthBar.transform.parent.Find("HealthText");
+        _healthTextTMP = _healthText.GetComponent<CustomTextMeshPro>();
+            
+        if (_healthText.TryGetComponent(out TranslatedTextMeshPro healthTranslatedTextMeshPro))
+        {
+            Object.DestroyImmediate(healthTranslatedTextMeshPro);
         }
     }
 
@@ -59,6 +69,13 @@ internal static class DomeHudPatches
             : "";
 
         _scoreTextTMP.text = $"{accString}{perfectPlusString}";
+        
+        if (_healthTextTMP == null)
+        {
+            return;
+        }
+
+        _healthTextTMP.text = __instance.PlayState.health.ToString().PadLeft(3, '0');
     }
 
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateTranslatedElements))]
