@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Threading.Tasks;
 using BepInEx.Configuration;
 using SpinCore.Translation;
 using SpinCore.UI;
@@ -23,6 +22,12 @@ public partial class Plugin
     internal static ConfigEntry<Vector3> Multiplier4XColor = null!;*/
     
     internal static ConfigEntry<Vector3> NumberColor = null!;
+    
+    internal static ConfigEntry<bool> EnableMultiplierBar = null!;
+    internal static ConfigEntry<bool> EnableMultiplierText = null!;
+    internal static ConfigEntry<bool> EnableCombo = null!;
+    internal static ConfigEntry<bool> EnableHealthBar = null!;
+    internal static ConfigEntry<bool> EnableScore = null!;
 
     private void RegisterConfigEntries()
     {
@@ -31,6 +36,22 @@ public partial class Plugin
         EnablePerfectPlusCount = Config.Bind("General", nameof(EnablePerfectPlusCount), false,
             "Show Perfect+ count beside accuracy");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", "Show Perfect+ count beside accuracy");
+        
+        EnableMultiplierBar = Config.Bind("General", nameof(EnableMultiplierBar), true,
+            "Show the multiplier bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableMultiplierBar)}", "Show multiplier bar");
+        EnableMultiplierText = Config.Bind("General", nameof(EnableMultiplierText), true,
+            "Show the multiplier text");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableMultiplierText)}", "Show multiplier text");
+        EnableCombo = Config.Bind("General", nameof(EnableCombo), true,
+            "Show the current combo");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableCombo)}", "Show combo");
+        EnableHealthBar = Config.Bind("General", nameof(EnableHealthBar), true,
+            "Show the health bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableHealthBar)}", "Show health bar");
+        EnableScore = Config.Bind("General", nameof(EnableScore), true,
+            "Show the current score");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableScore)}", "Show score");
 
         /*Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
             "Color for the multiplier at 1x");
@@ -57,81 +78,6 @@ public partial class Plugin
         UIHelper.RegisterMenuInModSettingsRoot($"{TRANSLATION_PREFIX}ModName", rootModPage);
     }
 
-    internal static async Task UpdateColors()
-    {
-        PlayStateContainer? playStateContainer = null;
-        while (playStateContainer == null)
-        {
-            playStateContainer = GameObject.Find("PlayStateContainer(Clone)")?.GetComponent<PlayStateContainer>();
-#if DEBUG
-            Log.LogInfo("Waiting for play state container");      
-#endif
-            await Awaitable.EndOfFrameAsync();
-        }
-
-        Color textColor = new Color(NumberColor.Value.x, NumberColor.Value.y, NumberColor.Value.z);
-        playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors[1] = textColor;
-
-        /*Color[] colors =
-        [
-            Color.black
-        ];
-
-        ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
-        for (int i = 0; i < palette.colorArrays.Length; i++)
-        {
-            palette.colorArrays[i].colors = colors;
-        }
-
-        playStateContainer.Hud.multiplierPalette = palette;
-
-        foreach (IPaletteColorizer paletteColorizer in playStateContainer.Hud._multiplierColoring)
-        {
-            paletteColorizer.Palette = palette;
-            paletteColorizer.ColorIndex = 0;
-        }*/
-
-        /*Color[] colors =
-        [
-            new(Multiplier1XColor.Value.x, Multiplier1XColor.Value.y, Multiplier1XColor.Value.z),
-            new(Multiplier2XColor.Value.x, Multiplier2XColor.Value.y, Multiplier2XColor.Value.z),
-            new(Multiplier3XColor.Value.x, Multiplier3XColor.Value.y, Multiplier3XColor.Value.z),
-            new(Multiplier4XColor.Value.x, Multiplier4XColor.Value.y, Multiplier4XColor.Value.z)
-        ];
-
-        /*foreach (string propertyName in playStateContainer.Hud.healthBar.material.GetPropertyNames(MaterialPropertyType.Vector))
-        {
-            Plugin.Log.LogInfo(propertyName);
-        }
-
-        foreach (Color colorPaletteColor in playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors)
-        {
-            Plugin.Log.LogInfo(colorPaletteColor);
-        }*/
-
-        /*
-        ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
-        palette.colorArrays[0].colors = colors;
-
-        playStateContainer.Hud.multiplierPalette = palette;
-        playStateContainer.Hud.multiplierBar._spriteMesh.Palette = palette;
-        foreach (IPaletteColorizer paletteColorizer in playStateContainer.Hud._multiplierColoring)
-        {
-            paletteColorizer.Palette = palette;
-        }
-
-        Color[] otherColors =
-        [
-            new(NumberColor.Value.x, NumberColor.Value.y, NumberColor.Value.z)
-        ];
-
-        ColorPalette otherPalette = ScriptableObject.CreateInstance<ColorPalette>();
-        otherPalette.colorArrays[0].colors = otherColors;
-
-        // ........this changes the textnumber colors? am i going insane?
-        playStateContainer.Hud.healthBar._spriteMesh.Palette = otherPalette;*/
-    }
-
     private static void RootModPageOnPageLoad(Transform rootModPageTransform)
     {
         CustomGroup modGroup = UIHelper.CreateGroup(rootModPageTransform, nameof(HUDTweaks));
@@ -144,6 +90,61 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", EnablePerfectPlusCount.Value, value =>
             {
                 EnablePerfectPlusCount.Value = value;
+            });
+        #endregion
+        
+        #region EnableMultiplierBar
+        CustomGroup enableMultiplierBarGroup = UIHelper.CreateGroup(modGroup, "EnableMultiplierBarGroup");
+        enableMultiplierBarGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableMultiplierBarGroup, nameof(EnableMultiplierBar),
+            $"{TRANSLATION_PREFIX}{nameof(EnableMultiplierBar)}", EnableMultiplierBar.Value, value =>
+            {
+                EnableMultiplierBar.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableMultiplierText
+        CustomGroup enableMultiplierTextGroup = UIHelper.CreateGroup(modGroup, "EnableMultiplierTextGroup");
+        enableMultiplierTextGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableMultiplierTextGroup, nameof(EnableMultiplierText),
+            $"{TRANSLATION_PREFIX}{nameof(EnableMultiplierText)}", EnableMultiplierText.Value, value =>
+            {
+                EnableMultiplierText.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableCombo
+        CustomGroup enableComboGroup = UIHelper.CreateGroup(modGroup, "EnableComboGroup");
+        enableComboGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableComboGroup, nameof(EnableCombo),
+            $"{TRANSLATION_PREFIX}{nameof(EnableCombo)}", EnableCombo.Value, value =>
+            {
+                EnableCombo.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableHealthBar
+        CustomGroup enableHealthBarGroup = UIHelper.CreateGroup(modGroup, "EnableHealthBarGroup");
+        enableHealthBarGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableHealthBarGroup, nameof(EnableHealthBar),
+            $"{TRANSLATION_PREFIX}{nameof(EnableHealthBar)}", EnableHealthBar.Value, value =>
+            {
+                EnableHealthBar.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableScore
+        CustomGroup enableScoreGroup = UIHelper.CreateGroup(modGroup, "EnableScoreGroup");
+        enableScoreGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableScoreGroup, nameof(EnableScore),
+            $"{TRANSLATION_PREFIX}{nameof(EnableScore)}", EnableScore.Value, value =>
+            {
+                EnableScore.Value = value;
+                _ = UpdateHudElementsVisibility();
             });
         #endregion
         

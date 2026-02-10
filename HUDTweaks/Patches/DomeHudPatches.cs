@@ -9,14 +9,22 @@ internal static class DomeHudPatches
 {
     private static Transform? _scoreText;
     private static CustomTextMeshPro? _scoreTextTMP;
-    
+
+    [HarmonyPatch(typeof(PlayingTrackGameState), nameof(PlayingTrackGameState.OnBecameActive))]
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
     [HarmonyPostfix]
     // ReSharper disable once InconsistentNaming
-    public static void InitPatch(DomeHud __instance)
+    public static void ConfigUpdatePatches()
     {
         _ = Plugin.UpdateColors();
-        
+        _ = Plugin.UpdateHudElementsVisibility();
+    }
+
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    public static void DomeHud_InitPatch(DomeHud __instance)
+    {
         if (_scoreText != null)
         {
             return;
