@@ -133,6 +133,8 @@ public partial class Plugin : BaseUnityPlugin
         
         // score text
         domeHud.number.transform.parent.parent.gameObject.SetActive(EnableScore.Value);
+        
+        playStateContainer._trackSkinVisuals?.transform.Find("TrackStrip")?.gameObject.SetActive(EnableTrackStrips.Value);
 
         for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
         {

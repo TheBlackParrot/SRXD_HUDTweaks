@@ -133,14 +133,13 @@ internal static class DomeHudPatches
         }
         
         PlayState? playState = __instance._playState;
-        if (playState == null)
+        PlayableTrackData? trackData = playState?.trackData;
+        if (playState == null || trackData == null)
         {
             return;
         }
-
-        PlayableTrackData trackData = playState.trackData;
         
-        double currentBeat = trackData.GetBeatAtTime(PlayState.Active.currentTrackTime).AsDouble;
+        double currentBeat = trackData.GetBeatAtTime(playState.currentTrackTime).AsDouble;
         __instance.trackTimePassedText.IntParam1 = currentBeat.FloorToInt();
         int fraction = ((currentBeat % 1) * 100).FloorToInt();
         __instance.trackTimePassedText.IntParam2 = (fraction - (fraction % 50)) / 50;

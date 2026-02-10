@@ -30,6 +30,7 @@ public partial class Plugin
     internal static ConfigEntry<bool> EnableHealthBar = null!;
     internal static ConfigEntry<bool> EnableScore = null!;
     internal static ConfigEntry<bool> EnableHurtFlashing = null!;
+    internal static ConfigEntry<bool> EnableTrackStrips = null!;
 
     internal static ConfigEntry<string> TrackInfoText = null!;
     
@@ -62,9 +63,12 @@ public partial class Plugin
         EnableScore = Config.Bind("General", nameof(EnableScore), true,
             "Show the current score");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableScore)}", "Show score");
-        EnableScore = Config.Bind("General", nameof(EnableHurtFlashing), true,
+        EnableHurtFlashing = Config.Bind("General", nameof(EnableHurtFlashing), true,
             "Show the default subtle HUD flashing when your health drops");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableHurtFlashing)}", "Show hurt flashing");
+        EnableTrackStrips = Config.Bind("General", nameof(EnableTrackStrips), true,
+            "Show the highlights/track strip on the sides of the track");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableTrackStrips)}", "Show track highlights");
 
         /*Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
             "Color for the multiplier at 1x");
@@ -183,6 +187,17 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableHurtFlashing)}", EnableHurtFlashing.Value, value =>
             {
                 EnableHurtFlashing.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableTrackStrips
+        CustomGroup enableTrackStripsGroup = UIHelper.CreateGroup(modGroup, "EnableTrackStripsGroup");
+        enableTrackStripsGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableTrackStripsGroup, nameof(EnableTrackStrips),
+            $"{TRANSLATION_PREFIX}{nameof(EnableTrackStrips)}", EnableTrackStrips.Value, value =>
+            {
+                EnableTrackStrips.Value = value;
                 _ = UpdateHudElementsVisibility();
             });
         #endregion
