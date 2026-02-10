@@ -82,13 +82,15 @@ internal static class DomeHudPatches
             return true;
         }
 
+        int trackDuration = trackData.GameplayEndTick.ToSecondsInt().Max(0) + 1;
         Dictionary<string, string> tags = new()
         {
             { "%title%", trackInfoMetadata.title },
             { "%artist%", trackInfoMetadata.artistName },
             { "%charter%", trackInfoMetadata.charter },
             { "%difficulty%", trackData.Difficulty.ToString() },
-            { "%rating%", trackData.DifficultyRating.ToString() }
+            { "%rating%", trackData.DifficultyRating.ToString() },
+            { "%duration%", $"{(trackDuration / 60d).FloorToInt()}:{(trackDuration % 60).ToString().PadLeft(2, '0')}" }
         };
         
         string formattedText = Plugin.TrackInfoText.Value;
@@ -101,6 +103,41 @@ internal static class DomeHudPatches
         __instance.trackTitleText.SetText(formattedText);
         
         return false;
+    }
+    
+    [HarmonyPatch(typeof(DomeHudTrackTimeBar), nameof(DomeHudTrackTimeBar.LateUpdate))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    public static void LateUpdatePatch(DomeHudTrackTimeBar __instance)
+    {
+        if (!Plugin.ShowTimeInBeats.Value)
+        {
+            return;
+        }
+        
+        PlayState? playState = __instance._playState;
+        if (playState == null)
+        {
+            return;
+        }
+
+        PlayableTrackData trackData = playState.trackData;
+        
+        double currentBeat = trackData.GetBeatAtTime(PlayState.Active.currentTrackTime).AsDouble;
+        __instance.trackTimePassedText.IntParam1 = currentBeat.FloorToInt();
+        int fraction = ((currentBeat % 1) * 100).FloorToInt();
+        __instance.trackTimePassedText.IntParam2 = (fraction - (fraction % 50)) / 50;
+
+        if (playState.SetupParameters.playType == PlayType.Endless)
+        {
+            return;
+        }
+        
+        // yeah this updates every frame too, buh
+        double finalBeat = trackData.GetBeatAtTime(trackData.GameplayEndTick.ToSecondsInt().Max(0) + 1).AsDouble;
+        __instance.trackLengthText.IntParam1 = finalBeat.FloorToInt();
+        int lengthFraction = ((finalBeat % 1) * 100).FloorToInt();
+        __instance.trackLengthText.IntParam2 = (lengthFraction - (lengthFraction % 50)) / 50;
     }
 
     /*[HarmonyPatch(typeof(DomeHud), nameof(DomeHud.LateUpdate))]

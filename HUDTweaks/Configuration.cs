@@ -31,6 +31,8 @@ public partial class Plugin
     internal static ConfigEntry<bool> EnableScore = null!;
 
     internal static ConfigEntry<string> TrackInfoText = null!;
+    
+    internal static ConfigEntry<bool> ShowTimeInBeats = null!;
 
     private void RegisterConfigEntries()
     {
@@ -39,6 +41,10 @@ public partial class Plugin
         EnablePerfectPlusCount = Config.Bind("General", nameof(EnablePerfectPlusCount), false,
             "Show Perfect+ count beside accuracy");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", "Show Perfect+ count beside accuracy");
+        
+        ShowTimeInBeats = Config.Bind("General", nameof(ShowTimeInBeats), false,
+            "Show time values in beats");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", "Show time in beats");
         
         EnableMultiplierBar = Config.Bind("General", nameof(EnableMultiplierBar), true,
             "Show the multiplier bar");
@@ -98,6 +104,16 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", EnablePerfectPlusCount.Value, value =>
             {
                 EnablePerfectPlusCount.Value = value;
+            });
+        #endregion
+        
+        #region ShowTimeInBeats
+        CustomGroup showTimeInBeatsGroup = UIHelper.CreateGroup(modGroup, "ShowTimeInBeatsGroup");
+        showTimeInBeatsGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(showTimeInBeatsGroup, nameof(ShowTimeInBeats),
+            $"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", ShowTimeInBeats.Value, value =>
+            {
+                ShowTimeInBeats.Value = value;
             });
         #endregion
         
