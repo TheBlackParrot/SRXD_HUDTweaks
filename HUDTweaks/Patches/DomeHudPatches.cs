@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using HarmonyLib;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -58,6 +59,48 @@ internal static class DomeHudPatches
             : "";
 
         _scoreTextTMP.text = $"{accString}{perfectPlusString}";
+    }
+
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateTranslatedElements))]
+    [HarmonyPrefix]
+    // ReSharper disable once InconsistentNaming
+    public static bool UpdateTranslatedElementsPatch(DomeHud __instance)
+    {
+        if (__instance._playState == null)
+        {
+            return true;
+        }
+        if (__instance._playState.IsLocalMultiplayer)
+        {
+            return true;
+        }
+        
+        PlayableTrackData? trackData = __instance._playState.trackData;
+        TrackInfoMetadata? trackInfoMetadata = trackData?.Setup.TrackDataSegments[__instance._currentTrackSectionIndex.GetValueOrDefault()].GetTrackInfoMetadata();
+        if (trackData == null || trackInfoMetadata == null)
+        {
+            return true;
+        }
+
+        Dictionary<string, string> tags = new()
+        {
+            { "%title%", trackInfoMetadata.title },
+            { "%artist%", trackInfoMetadata.artistName },
+            { "%charter%", trackInfoMetadata.charter },
+            { "%difficulty%", trackData.Difficulty.ToString() },
+            { "%rating%", trackData.DifficultyRating.ToString() }
+        };
+        
+        string formattedText = Plugin.TrackInfoText.Value;
+        // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
+        foreach (KeyValuePair<string, string> tag in tags)
+        {
+            formattedText = formattedText.Replace(tag.Key, tag.Value);
+        }
+
+        __instance.trackTitleText.SetText(formattedText);
+        
+        return false;
     }
 
     /*[HarmonyPatch(typeof(DomeHud), nameof(DomeHud.LateUpdate))]

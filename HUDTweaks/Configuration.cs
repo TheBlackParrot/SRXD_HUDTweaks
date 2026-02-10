@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using BepInEx.Configuration;
 using SpinCore.Translation;
 using SpinCore.UI;
@@ -28,6 +29,8 @@ public partial class Plugin
     internal static ConfigEntry<bool> EnableCombo = null!;
     internal static ConfigEntry<bool> EnableHealthBar = null!;
     internal static ConfigEntry<bool> EnableScore = null!;
+
+    internal static ConfigEntry<string> TrackInfoText = null!;
 
     private void RegisterConfigEntries()
     {
@@ -68,6 +71,11 @@ public partial class Plugin
         
         NumberColor = Config.Bind("Colors", nameof(NumberColor), YellowHUDColor, 
             "Color for numbers");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(NumberColor)}", "Number color");
+        
+        TrackInfoText = Config.Bind("Info", nameof(TrackInfoText), "%title% - %artist%",
+            "Format string for the track information");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", "Track information string");
     }
 
     private static void CreateModPage()
@@ -188,6 +196,32 @@ public partial class Plugin
             _ = UpdateColors();
         });
         numberColorInputB.InputField.SetText(NumberColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region TrackInfoText
+        CustomGroup trackInfoTextGroup = UIHelper.CreateGroup(modGroup, "TrackInfoTextGroup");
+        trackInfoTextGroup.LayoutDirection = Axis.Vertical;
+        UIHelper.CreateLabel(trackInfoTextGroup, "TrackInfoTextLabel", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}");
+        
+        CustomInputField trackInfoTextInput = UIHelper.CreateInputField(trackInfoTextGroup, "TrackInfoTextInput", (_, value) =>
+        {
+            TrackInfoText.Value = value;
+            
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await Awaitable.MainThreadAsync();
+                    PlayStateContainer playStateContainer = await GetPlayStateContainer();
+                    playStateContainer.Hud.UpdateTranslatedElements();
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError(ex);
+                }
+            });
+        });
+        trackInfoTextInput.InputField.SetText(TrackInfoText.Value);
         #endregion
 
         /*#region Multiplier1XColors
