@@ -98,12 +98,16 @@ public partial class Plugin
             "Format string for the track information");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", "Track Information String");
         
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
+        
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Artist", "Who made the current track");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Charter", "Who charted the chart being played");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Difficulty", "The difficulty name of the chart being played");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Duration", "How long the current track is (MM:SS)");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Rating", "The numeric rating of the chart being played");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Title", "Title of the current track");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_NewLineCharacter", "New line character");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_TabCharacter", "Tab character");
     }
 
     private static void CreateModPage()
@@ -116,13 +120,13 @@ public partial class Plugin
 
     private const int TAG_REFERENCE_PREFERRED_WIDTH = 500;
 
-    private static void CreateReferenceTagRow(CustomGroup modGroup, string which)
+    private static void CreateReferenceTagRow(CustomGroup modGroup, string which, string? tagOverride = null)
     {
         CustomGroup referenceGroup = UIHelper.CreateGroup(modGroup, $"{which}TagReferenceGroup");
         referenceGroup.LayoutDirection = Axis.Horizontal;
         
         CustomTextComponent referenceTag = UIHelper.CreateLabel(referenceGroup, $"{which}TagReferenceName", TranslationReference.Empty);
-        referenceTag.ExtraText = $"%{which.ToLower()}%";
+        referenceTag.ExtraText = tagOverride ?? $"%{which.ToLower()}%";
         LayoutElement referenceTagLayoutComponent = referenceTag.Transform.GetComponent<LayoutElement>();
         referenceTagLayoutComponent.preferredWidth = 0;
         
@@ -226,6 +230,8 @@ public partial class Plugin
             });
         #endregion
         
+        UIHelper.CreateLabel(modGroup, "WhereAreMyTogglesPls", $"{TRANSLATION_PREFIX}OtherToggles");
+        
         UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Colors", false);
         
         #region NumberColor
@@ -326,6 +332,8 @@ public partial class Plugin
         CreateReferenceTagRow(modGroup, "Charter");
         CreateReferenceTagRow(modGroup, "Difficulty");
         CreateReferenceTagRow(modGroup, "Rating");
+        CreateReferenceTagRow(modGroup, "NewLineCharacter", @"\\n");
+        CreateReferenceTagRow(modGroup, "TabCharacter", @"\\t");
         #endregion
 
         /*#region Multiplier1XColors
