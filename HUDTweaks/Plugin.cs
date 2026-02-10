@@ -137,19 +137,30 @@ public partial class Plugin : BaseUnityPlugin
         for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
         {
             GameObject rightContainerObject = domeHud.healthBar.transform.parent.GetChild(i).gameObject;
+            
             if (rightContainerObject.name.Contains("Health"))
             {
                 rightContainerObject.SetActive(EnableHealthBar.Value);
             }
+
+            if (rightContainerObject.name == "HurtBacking")
+            {
+                rightContainerObject.SetActive(EnableHurtFlashing.Value);
+            }
         }
         
-
         for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
         {
             GameObject leftContainerObject = domeHud.multiplierBar.transform.parent.GetChild(i).gameObject;
+            
             if (leftContainerObject.name.Contains("MultiplierBar"))
             {
                 leftContainerObject.SetActive(EnableMultiplierBar.Value);
+            }
+            
+            if (leftContainerObject.name == "HurtBacking")
+            {
+                leftContainerObject.SetActive(EnableHurtFlashing.Value);
             }
         }
     }

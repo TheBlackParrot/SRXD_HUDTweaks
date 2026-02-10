@@ -29,6 +29,7 @@ public partial class Plugin
     internal static ConfigEntry<bool> EnableCombo = null!;
     internal static ConfigEntry<bool> EnableHealthBar = null!;
     internal static ConfigEntry<bool> EnableScore = null!;
+    internal static ConfigEntry<bool> EnableHurtFlashing = null!;
 
     internal static ConfigEntry<string> TrackInfoText = null!;
     
@@ -61,6 +62,9 @@ public partial class Plugin
         EnableScore = Config.Bind("General", nameof(EnableScore), true,
             "Show the current score");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableScore)}", "Show score");
+        EnableScore = Config.Bind("General", nameof(EnableHurtFlashing), true,
+            "Show the default subtle HUD flashing when your health drops");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableHurtFlashing)}", "Show hurt flashing");
 
         /*Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
             "Color for the multiplier at 1x");
@@ -168,6 +172,17 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableScore)}", EnableScore.Value, value =>
             {
                 EnableScore.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableHurtFlashing
+        CustomGroup enableHurtFlashingGroup = UIHelper.CreateGroup(modGroup, "EnableHurtFlashingGroup");
+        enableHurtFlashingGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableHurtFlashingGroup, nameof(EnableHurtFlashing),
+            $"{TRANSLATION_PREFIX}{nameof(EnableHurtFlashing)}", EnableHurtFlashing.Value, value =>
+            {
+                EnableHurtFlashing.Value = value;
                 _ = UpdateHudElementsVisibility();
             });
         #endregion
