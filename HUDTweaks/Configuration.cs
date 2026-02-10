@@ -12,15 +12,15 @@ public partial class Plugin
 {
     // note to self: BepInEx forces maximum values in the Color type to 1f, for. some reason
     
-    private static readonly Vector3 BlueHUDColor = new(0f, 0.703f, 5.283f);
+    //private static readonly Vector3 BlueHUDColor = new(0f, 0.703f, 5.283f);
     private static readonly Vector3 YellowHUDColor = new(4.977f, 0.859f, 0f);
     
     internal static ConfigEntry<bool> EnablePerfectPlusCount = null!;
     
-    internal static ConfigEntry<Vector3> Multiplier1XColor = null!;
+    /*internal static ConfigEntry<Vector3> Multiplier1XColor = null!;
     internal static ConfigEntry<Vector3> Multiplier2XColor = null!;
     internal static ConfigEntry<Vector3> Multiplier3XColor = null!;
-    internal static ConfigEntry<Vector3> Multiplier4XColor = null!;
+    internal static ConfigEntry<Vector3> Multiplier4XColor = null!;*/
     
     internal static ConfigEntry<Vector3> NumberColor = null!;
 
@@ -32,7 +32,7 @@ public partial class Plugin
             "Show Perfect+ count beside accuracy");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", "Show Perfect+ count beside accuracy");
 
-        Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
+        /*Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
             "Color for the multiplier at 1x");
         Multiplier2XColor = Config.Bind("Colors", nameof(Multiplier2XColor), BlueHUDColor, 
             "Color for the multiplier at 2x");
@@ -43,7 +43,7 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier1XColor)}", "1x multiplier color");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier2XColor)}", "2x multiplier color");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier3XColor)}", "3x multiplier color");
-        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier4XColor)}", "4x multiplier color");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier4XColor)}", "4x multiplier color");*/
         
         NumberColor = Config.Bind("Colors", nameof(NumberColor), YellowHUDColor, 
             "Color for numbers");
@@ -68,8 +68,30 @@ public partial class Plugin
 #endif
             await Awaitable.EndOfFrameAsync();
         }
-        
-        Color[] colors =
+
+        Color textColor = new Color(NumberColor.Value.x, NumberColor.Value.y, NumberColor.Value.z);
+        playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors[1] = textColor;
+
+        /*Color[] colors =
+        [
+            Color.black
+        ];
+
+        ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
+        for (int i = 0; i < palette.colorArrays.Length; i++)
+        {
+            palette.colorArrays[i].colors = colors;
+        }
+
+        playStateContainer.Hud.multiplierPalette = palette;
+
+        foreach (IPaletteColorizer paletteColorizer in playStateContainer.Hud._multiplierColoring)
+        {
+            paletteColorizer.Palette = palette;
+            paletteColorizer.ColorIndex = 0;
+        }*/
+
+        /*Color[] colors =
         [
             new(Multiplier1XColor.Value.x, Multiplier1XColor.Value.y, Multiplier1XColor.Value.z),
             new(Multiplier2XColor.Value.x, Multiplier2XColor.Value.y, Multiplier2XColor.Value.z),
@@ -77,28 +99,37 @@ public partial class Plugin
             new(Multiplier4XColor.Value.x, Multiplier4XColor.Value.y, Multiplier4XColor.Value.z)
         ];
 
-        foreach (IPaletteColorizer paletteColorizer in playStateContainer.Hud._multiplierColoring)
-        {
-            paletteColorizer.Palette.colorArrays[0].colors = colors;
-        }
-        
-        foreach (string propertyName in playStateContainer.Hud.healthBar.material.GetPropertyNames(MaterialPropertyType.Vector))
+        /*foreach (string propertyName in playStateContainer.Hud.healthBar.material.GetPropertyNames(MaterialPropertyType.Vector))
         {
             Plugin.Log.LogInfo(propertyName);
         }
-        
+
         foreach (Color colorPaletteColor in playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors)
         {
             Plugin.Log.LogInfo(colorPaletteColor);
+        }*/
+
+        /*
+        ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
+        palette.colorArrays[0].colors = colors;
+
+        playStateContainer.Hud.multiplierPalette = palette;
+        playStateContainer.Hud.multiplierBar._spriteMesh.Palette = palette;
+        foreach (IPaletteColorizer paletteColorizer in playStateContainer.Hud._multiplierColoring)
+        {
+            paletteColorizer.Palette = palette;
         }
-        
+
         Color[] otherColors =
         [
             new(NumberColor.Value.x, NumberColor.Value.y, NumberColor.Value.z)
         ];
 
+        ColorPalette otherPalette = ScriptableObject.CreateInstance<ColorPalette>();
+        otherPalette.colorArrays[0].colors = otherColors;
+
         // ........this changes the textnumber colors? am i going insane?
-        playStateContainer.Hud.healthBar._spriteMesh.Palette.colorArrays[0].colors = otherColors;
+        playStateContainer.Hud.healthBar._spriteMesh.Palette = otherPalette;*/
     }
 
     private static void RootModPageOnPageLoad(Transform rootModPageTransform)
@@ -158,7 +189,7 @@ public partial class Plugin
         numberColorInputB.InputField.SetText(NumberColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
 
-        #region Multiplier1XColors
+        /*#region Multiplier1XColors
         CustomGroup multiplier1XColorGroup = UIHelper.CreateGroup(modGroup, "Multiplier1XColorGroup");
         multiplier1XColorGroup.LayoutDirection = Axis.Horizontal;
         UIHelper.CreateLabel(multiplier1XColorGroup, "Multiplier1XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier1XColor)}");
@@ -324,6 +355,6 @@ public partial class Plugin
             _ = UpdateColors();
         });
         multiplier4XColorInputB.InputField.SetText(Multiplier4XColor.Value.z.ToString(CultureInfo.InvariantCulture));
-        #endregion
+        #endregion*/
     }
 }

@@ -51,4 +51,12 @@ internal static class DomeHudPatches
 
         _scoreTextTMP.text = $"{accString}{perfectPlusString}";
     }
+
+    /*[HarmonyPatch(typeof(DomeHud), nameof(DomeHud.LateUpdate))]
+    [HarmonyPostfix]
+    public static void LateUpdatePatch(DomeHud __instance)
+    {
+        //Plugin.Log.LogInfo(string.Join("\n", __instance.healthBar._spriteMesh.colorIndex));
+        //Plugin.Log.LogInfo(__instance.healthBar._spriteMesh.colorIndex);
+    }*/
 }
