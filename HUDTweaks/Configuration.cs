@@ -5,6 +5,7 @@ using BepInEx.Configuration;
 using SpinCore.Translation;
 using SpinCore.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HUDTweaks;
 
@@ -40,6 +41,8 @@ public partial class Plugin
     private void RegisterConfigEntries()
     {
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Colors", "Colors");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Extras", "Extras");
         
         EnablePerfectPlusCount = Config.Bind("General", nameof(EnablePerfectPlusCount), false,
             "Show Perfect+ count beside accuracy");
@@ -93,7 +96,14 @@ public partial class Plugin
         
         TrackInfoText = Config.Bind("Info", nameof(TrackInfoText), "%title% - %artist%",
             "Format string for the track information");
-        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", "Track information string");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", "Track Information String");
+        
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Artist", "Who made the current track");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Charter", "Who charted the chart being played");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Difficulty", "The difficulty name of the chart being played");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Duration", "How long the current track is (MM:SS)");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Rating", "The numeric rating of the chart being played");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Title", "Title of the current track");
     }
 
     private static void CreateModPage()
@@ -104,30 +114,29 @@ public partial class Plugin
         UIHelper.RegisterMenuInModSettingsRoot($"{TRANSLATION_PREFIX}ModName", rootModPage);
     }
 
+    private const int TAG_REFERENCE_PREFERRED_WIDTH = 500;
+
+    private static void CreateReferenceTagRow(CustomGroup modGroup, string which)
+    {
+        CustomGroup referenceGroup = UIHelper.CreateGroup(modGroup, $"{which}TagReferenceGroup");
+        referenceGroup.LayoutDirection = Axis.Horizontal;
+        
+        CustomTextComponent referenceTag = UIHelper.CreateLabel(referenceGroup, $"{which}TagReferenceName", TranslationReference.Empty);
+        referenceTag.ExtraText = $"%{which.ToLower()}%";
+        LayoutElement referenceTagLayoutComponent = referenceTag.Transform.GetComponent<LayoutElement>();
+        referenceTagLayoutComponent.preferredWidth = 0;
+        
+        CustomTextComponent referenceTagDescription =
+            UIHelper.CreateLabel(referenceGroup, $"{which}TagReferenceDescription", $"{TRANSLATION_PREFIX}TagDescription_{which}");
+        CustomTextMeshProUGUI referenceTagDescriptionTextComponent = referenceTagDescription.Transform.GetComponent<CustomTextMeshProUGUI>();
+        referenceTagDescriptionTextComponent.fontSize /= 1.25f;
+        LayoutElement referenceTagDescriptionLayoutComponent = referenceTagDescription.Transform.GetComponent<LayoutElement>();
+        referenceTagDescriptionLayoutComponent.preferredWidth = TAG_REFERENCE_PREFERRED_WIDTH;
+    }
     private static void RootModPageOnPageLoad(Transform rootModPageTransform)
     {
         CustomGroup modGroup = UIHelper.CreateGroup(rootModPageTransform, nameof(HUDTweaks));
         UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}ModName", false);
-        
-        #region EnablePerfectPlusCount
-        CustomGroup enablePerfectPlusCountGroup = UIHelper.CreateGroup(modGroup, "EnablePerfectPlusCountGroup");
-        enablePerfectPlusCountGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(enablePerfectPlusCountGroup, nameof(EnablePerfectPlusCount),
-            $"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", EnablePerfectPlusCount.Value, value =>
-            {
-                EnablePerfectPlusCount.Value = value;
-            });
-        #endregion
-        
-        #region ShowTimeInBeats
-        CustomGroup showTimeInBeatsGroup = UIHelper.CreateGroup(modGroup, "ShowTimeInBeatsGroup");
-        showTimeInBeatsGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(showTimeInBeatsGroup, nameof(ShowTimeInBeats),
-            $"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", ShowTimeInBeats.Value, value =>
-            {
-                ShowTimeInBeats.Value = value;
-            });
-        #endregion
         
         #region EnableMultiplierBar
         CustomGroup enableMultiplierBarGroup = UIHelper.CreateGroup(modGroup, "EnableMultiplierBarGroup");
@@ -162,17 +171,6 @@ public partial class Plugin
             });
         #endregion
         
-        #region EnableHealthBar
-        CustomGroup enableHealthBarGroup = UIHelper.CreateGroup(modGroup, "EnableHealthBarGroup");
-        enableHealthBarGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(enableHealthBarGroup, nameof(EnableHealthBar),
-            $"{TRANSLATION_PREFIX}{nameof(EnableHealthBar)}", EnableHealthBar.Value, value =>
-            {
-                EnableHealthBar.Value = value;
-                _ = UpdateHudElementsVisibility();
-            });
-        #endregion
-        
         #region EnableScore
         CustomGroup enableScoreGroup = UIHelper.CreateGroup(modGroup, "EnableScoreGroup");
         enableScoreGroup.LayoutDirection = Axis.Horizontal;
@@ -180,6 +178,17 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableScore)}", EnableScore.Value, value =>
             {
                 EnableScore.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableHealthBar
+        CustomGroup enableHealthBarGroup = UIHelper.CreateGroup(modGroup, "EnableHealthBarGroup");
+        enableHealthBarGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableHealthBarGroup, nameof(EnableHealthBar),
+            $"{TRANSLATION_PREFIX}{nameof(EnableHealthBar)}", EnableHealthBar.Value, value =>
+            {
+                EnableHealthBar.Value = value;
                 _ = UpdateHudElementsVisibility();
             });
         #endregion
@@ -216,6 +225,8 @@ public partial class Plugin
                 _ = UpdateHudElementsVisibility();
             });
         #endregion
+        
+        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Colors", false);
         
         #region NumberColor
         CustomGroup numberColorGroup = UIHelper.CreateGroup(modGroup, "NumberColorGroup");
@@ -259,10 +270,33 @@ public partial class Plugin
         numberColorInputB.InputField.SetText(NumberColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
         
+        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Extras", false);
+        
+        #region EnablePerfectPlusCount
+        CustomGroup enablePerfectPlusCountGroup = UIHelper.CreateGroup(modGroup, "EnablePerfectPlusCountGroup");
+        enablePerfectPlusCountGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enablePerfectPlusCountGroup, nameof(EnablePerfectPlusCount),
+            $"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", EnablePerfectPlusCount.Value, value =>
+            {
+                EnablePerfectPlusCount.Value = value;
+            });
+        #endregion
+        
+        #region ShowTimeInBeats
+        CustomGroup showTimeInBeatsGroup = UIHelper.CreateGroup(modGroup, "ShowTimeInBeatsGroup");
+        showTimeInBeatsGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(showTimeInBeatsGroup, nameof(ShowTimeInBeats),
+            $"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", ShowTimeInBeats.Value, value =>
+            {
+                ShowTimeInBeats.Value = value;
+            });
+        #endregion
+        
+        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", false);
+        
         #region TrackInfoText
         CustomGroup trackInfoTextGroup = UIHelper.CreateGroup(modGroup, "TrackInfoTextGroup");
         trackInfoTextGroup.LayoutDirection = Axis.Vertical;
-        UIHelper.CreateLabel(trackInfoTextGroup, "TrackInfoTextLabel", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}");
         
         CustomInputField trackInfoTextInput = UIHelper.CreateInputField(trackInfoTextGroup, "TrackInfoTextInput", (_, value) =>
         {
@@ -283,6 +317,15 @@ public partial class Plugin
             });
         });
         trackInfoTextInput.InputField.SetText(TrackInfoText.Value);
+        #endregion
+
+        #region TrackInfoTextTagsReference
+        CreateReferenceTagRow(modGroup, "Title");
+        CreateReferenceTagRow(modGroup, "Artist");
+        CreateReferenceTagRow(modGroup, "Duration");
+        CreateReferenceTagRow(modGroup, "Charter");
+        CreateReferenceTagRow(modGroup, "Difficulty");
+        CreateReferenceTagRow(modGroup, "Rating");
         #endregion
 
         /*#region Multiplier1XColors
