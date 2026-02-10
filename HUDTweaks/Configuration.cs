@@ -31,6 +31,7 @@ public partial class Plugin
     internal static ConfigEntry<bool> EnableScore = null!;
     internal static ConfigEntry<bool> EnableHurtFlashing = null!;
     internal static ConfigEntry<bool> EnableTrackStrips = null!;
+    internal static ConfigEntry<bool> EnableWheelGrips = null!;
 
     internal static ConfigEntry<string> TrackInfoText = null!;
     
@@ -69,6 +70,9 @@ public partial class Plugin
         EnableTrackStrips = Config.Bind("General", nameof(EnableTrackStrips), true,
             "Show the highlights/track strip on the sides of the track");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableTrackStrips)}", "Show track highlights");
+        EnableWheelGrips = Config.Bind("General", nameof(EnableWheelGrips), true,
+            "Show the ghostly transparent sides of the wheel (the grips)");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableWheelGrips)}", "Show wheel grips");
 
         /*Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
             "Color for the multiplier at 1x");
@@ -198,6 +202,17 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableTrackStrips)}", EnableTrackStrips.Value, value =>
             {
                 EnableTrackStrips.Value = value;
+                _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+        
+        #region EnableWheelGrips
+        CustomGroup enableWheelGripsGroup = UIHelper.CreateGroup(modGroup, "EnableWheelGripsGroup");
+        enableWheelGripsGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableWheelGripsGroup, nameof(EnableWheelGrips),
+            $"{TRANSLATION_PREFIX}{nameof(EnableWheelGrips)}", EnableWheelGrips.Value, value =>
+            {
+                EnableWheelGrips.Value = value;
                 _ = UpdateHudElementsVisibility();
             });
         #endregion

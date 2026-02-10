@@ -135,6 +135,8 @@ public partial class Plugin : BaseUnityPlugin
         domeHud.number.transform.parent.parent.gameObject.SetActive(EnableScore.Value);
         
         playStateContainer._trackSkinVisuals?.transform.Find("TrackStrip")?.gameObject.SetActive(EnableTrackStrips.Value);
+        playStateContainer.WheelVisuals?.leftGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
+        playStateContainer.WheelVisuals?.rightGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
 
         for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
         {
