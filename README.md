@@ -13,6 +13,7 @@
   - Wheel grips
   - Hiding accuracy log rows for timings above a set threshold
 - Positional offsets:
+  - Vertical position of the main HUD elements 
   - Vertical position of the track/chart info
   - Width of the time bar
 - Augmented info displays:
