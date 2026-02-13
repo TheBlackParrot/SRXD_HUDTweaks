@@ -37,6 +37,7 @@ public partial class Plugin
     internal static ConfigEntry<Vector3> HealthColor = null!;
     internal static ConfigEntry<Vector3> PfcColor = null!;
     internal static ConfigEntry<Vector3> FcColor = null!;
+    internal static ConfigEntry<Vector3> HurtColor = null!;
     
     internal static ConfigEntry<bool> EnableMultiplierBar = null!;
     internal static ConfigEntry<bool> EnableMultiplierText = null!;
@@ -130,6 +131,9 @@ public partial class Plugin
         HealthColor = Config.Bind("Colors", nameof(HealthColor), RedHUDColor, 
             "Color for health elements");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(HealthColor)}", "Health color");
+        HurtColor = Config.Bind("Colors", nameof(HurtColor), RedHUDColor, 
+            "Color for the areas that flash when getting hurt");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(HurtColor)}", "Hurt flash color");
         PfcColor = Config.Bind("Colors", nameof(PfcColor), CyanHUDColor, 
             "Color for PFC elements");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(PfcColor)}", "PFC color");
@@ -514,6 +518,48 @@ public partial class Plugin
             _ = UpdateColors();
         });
         healthColorInputB.InputField.SetText(HealthColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region HurtColors
+        CustomGroup hurtColorGroup = UIHelper.CreateGroup(modGroup, "HurtColorGroup");
+        hurtColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(hurtColorGroup, "HurtColorLabel", $"{TRANSLATION_PREFIX}{nameof(HurtColor)}");
+        
+        CustomInputField hurtColorInputR = UIHelper.CreateInputField(hurtColorGroup, "HurtColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            HurtColor.Value = HurtColor.Value with { x = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        hurtColorInputR.InputField.SetText(HurtColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField hurtColorInputG = UIHelper.CreateInputField(hurtColorGroup, "HurtColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            HurtColor.Value = HurtColor.Value with { y = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        hurtColorInputG.InputField.SetText(HurtColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField hurtColorInputB = UIHelper.CreateInputField(hurtColorGroup, "HurtColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            HurtColor.Value = HurtColor.Value with { z = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        hurtColorInputB.InputField.SetText(HurtColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
         
         #region PfcColors

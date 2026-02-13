@@ -34,6 +34,7 @@
   - Standard HUD text
   - Time elements
   - Health elements
+  - Hurt flash
   - PFC/FC indicators
 
 ## Dependencies

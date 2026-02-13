@@ -190,6 +190,11 @@ public partial class Plugin : BaseUnityPlugin
             meshRenderer.material.SetColor(FaceColor, PfcColor.Value.ToColor());
         }
 
+        foreach (MeshRenderer meshRenderer in DomeHudPatches.HurtBackingElementMeshRenderers)
+        {
+            meshRenderer.material.SetColor(FaceColor, HurtColor.Value.ToColor());
+        }
+
         ForceMultiplierPalette();
     }
 

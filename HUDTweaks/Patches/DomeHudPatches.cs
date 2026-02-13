@@ -34,6 +34,9 @@ internal static class DomeHudPatches
     private static readonly List<Transform> MultiplierElements = [];
     private static readonly List<MeshRenderer> MultiplierElementMeshRenderers = [];
     
+    private static readonly List<Transform> HurtBackingElements = [];
+    internal static readonly List<MeshRenderer> HurtBackingElementMeshRenderers = [];
+    
     private static ColorPalette? _palette;
     private static readonly int FaceColor = Shader.PropertyToID("_FaceColor");
 
@@ -155,6 +158,17 @@ internal static class DomeHudPatches
                 hdrMeshEffect.Palette = Plugin.WhitePalette;
             }
             else if (transform.TryGetComponent(out SpriteMesh spriteMesh))
+            {
+                spriteMesh.Palette = Plugin.WhitePalette;
+            }
+        }
+        
+        HurtBackingElements.Add(_mainHudLeftContainer.Find("HurtBacking/Quad"));
+        HurtBackingElements.Add(_mainHudRightContainer.Find("HurtBacking/Quad"));
+        foreach (Transform transform in HurtBackingElements)
+        {
+            HurtBackingElementMeshRenderers.Add(transform.GetComponent<MeshRenderer>());
+            if (transform.TryGetComponent(out SpriteMesh spriteMesh))
             {
                 spriteMesh.Palette = Plugin.WhitePalette;
             }
