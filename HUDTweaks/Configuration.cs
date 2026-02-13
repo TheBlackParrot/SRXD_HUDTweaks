@@ -60,6 +60,7 @@ public partial class Plugin
     private void RegisterConfigEntries()
     {
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Toggles", "Toggles");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Colors", "Colors");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Extras", "Extras");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Offsets", "Offsets");
@@ -201,6 +202,13 @@ public partial class Plugin
         CustomGroup modGroup = UIHelper.CreateGroup(rootModPageTransform, nameof(HUDTweaks));
         UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}ModName", false);
         
+        UIHelper.CreateButton(modGroup, $"Open{nameof(HUDTweaks)}RepositoryButton", $"{TRANSLATION_PREFIX}GitHubButtonText", () =>
+        {
+            Application.OpenURL($"https://github.com/TheBlackParrot/{REPO_NAME}/releases/latest");
+        });
+        
+        UIHelper.CreateSectionHeader(modGroup, "TogglesHeader", $"{TRANSLATION_PREFIX}Toggles", false);
+        
         #region EnableMultiplierBar
         CustomGroup enableMultiplierBarGroup = UIHelper.CreateGroup(modGroup, "EnableMultiplierBarGroup");
         enableMultiplierBarGroup.LayoutDirection = Axis.Horizontal;
@@ -300,7 +308,7 @@ public partial class Plugin
         
         UIHelper.CreateLabel(modGroup, "WhereAreMyTogglesPls", $"{TRANSLATION_PREFIX}OtherToggles");
         
-        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Offsets", false);
+        UIHelper.CreateSectionHeader(modGroup, "OffsetsHeader", $"{TRANSLATION_PREFIX}Offsets", false);
         
         #region MainHudVerticalOffset
         CustomGroup mainHudVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "MainHudVerticalOffsetGroup");
@@ -326,24 +334,6 @@ public partial class Plugin
             v => v.ToString());
         #endregion
         
-        /*#region TrackInfoVerticalOffset
-        CustomGroup trackInfoVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TrackInfoVerticalOffsetGroup");
-        trackInfoVerticalOffsetGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(trackInfoVerticalOffsetGroup, "TrackInfoVerticalOffsetLabel", $"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}");
-        
-        CustomInputField trackInfoVerticalOffsetInput = UIHelper.CreateInputField(trackInfoVerticalOffsetGroup, "TrackInfoVerticalOffsetInput", (_, newValue) =>
-        {
-            if (!float.TryParse(newValue, out float value))
-            {
-                return;
-            }
-
-            TrackInfoVerticalOffset.Value = value;
-            DomeHudPatches.UpdateOffsets();
-        });
-        trackInfoVerticalOffsetInput.InputField.SetText(TrackInfoVerticalOffset.Value.ToString(CultureInfo.InvariantCulture));
-        #endregion*/
-        
         #region TimeBarWidth
         CustomGroup timeBarWidthGroup = UIHelper.CreateGroup(modGroup, "TimeBarWidthGroup");
         UIHelper.CreateSmallMultiChoiceButton(timeBarWidthGroup, nameof(TimeBarWidth), $"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}",
@@ -356,7 +346,7 @@ public partial class Plugin
             v => v.ToString());
         #endregion
         
-        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Colors", false);
+        UIHelper.CreateSectionHeader(modGroup, "ColorsHeader", $"{TRANSLATION_PREFIX}Colors", false);
         
         #region NumberColor
         CustomGroup numberColorGroup = UIHelper.CreateGroup(modGroup, "NumberColorGroup");
@@ -778,7 +768,7 @@ public partial class Plugin
         multiplier4XColorInputB.InputField.SetText(Multiplier4XColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
         
-        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Extras", false);
+        UIHelper.CreateSectionHeader(modGroup, "ExtrasHeader", $"{TRANSLATION_PREFIX}Extras", false);
         
         #region EnableAccuracyDisplay
         CustomGroup enableAccuracyDisplayGroup = UIHelper.CreateGroup(modGroup, "EnableAccuracyDisplayGroup");
@@ -840,7 +830,7 @@ public partial class Plugin
             });
         #endregion
         
-        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", false);
+        UIHelper.CreateSectionHeader(modGroup, "TrackInfoHeader", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", false);
         
         #region TrackInfoText
         CustomGroup trackInfoTextGroup = UIHelper.CreateGroup(modGroup, "TrackInfoTextGroup");
@@ -877,10 +867,5 @@ public partial class Plugin
         CreateReferenceTagRow(modGroup, "NewLineCharacter", @"\\n");
         CreateReferenceTagRow(modGroup, "TabCharacter", @"\\t");
         #endregion
-        
-        UIHelper.CreateButton(modGroup, $"Open{nameof(HUDTweaks)}RepositoryButton", $"{TRANSLATION_PREFIX}GitHubButtonText", () =>
-        {
-            Application.OpenURL($"https://github.com/TheBlackParrot/{REPO_NAME}/releases/latest");
-        });
     }
 }
