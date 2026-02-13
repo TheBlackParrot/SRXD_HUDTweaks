@@ -54,6 +54,7 @@ public partial class Plugin
     internal static ConfigEntry<StrippedNoteTimingAccuracy> IgnoreAccuracyTypesThreshold = null!;
     
     internal static ConfigEntry<float> TrackInfoVerticalOffset = null!;
+    internal static ConfigEntry<int> TimeBarWidth = null!;
 
     private void RegisterConfigEntries()
     {
@@ -148,6 +149,9 @@ public partial class Plugin
         TrackInfoVerticalOffset = Config.Bind("Offsets", nameof(TrackInfoVerticalOffset), 0f,
             "Vertical offset of the track/chart info");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}", "Track info vertical offset");
+        TimeBarWidth = Config.Bind("Offsets", nameof(TimeBarWidth), 0,
+            "Extra width for the time bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}", "Time bar extra width");
         
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
         
@@ -310,6 +314,18 @@ public partial class Plugin
             DomeHudPatches.UpdateOffsets();
         });
         trackInfoVerticalOffsetInput.InputField.SetText(TrackInfoVerticalOffset.Value.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region TimeBarWidth
+        CustomGroup timeBarWidthGroup = UIHelper.CreateGroup(modGroup, "TimeBarWidthGroup");
+        UIHelper.CreateSmallMultiChoiceButton(timeBarWidthGroup, nameof(TimeBarWidth), $"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}",
+            TimeBarWidth.Value, (value) =>
+            {
+                TimeBarWidth.Value = value;
+                DomeHudPatches.UpdateOffsets();
+            },
+            () => new IntRange(-10, 10),
+            v => v.ToString());
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Colors", false);

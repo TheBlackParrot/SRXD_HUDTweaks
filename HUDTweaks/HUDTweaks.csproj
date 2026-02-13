@@ -60,6 +60,9 @@
         <Reference Include="SSD.Utility">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\SSD.Utility.dll</HintPath>
         </Reference>
+        <Reference Include="SSD.Types">
+            <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\SSD.Types.dll</HintPath>
+        </Reference>
         <Reference Include="Unity.TextMeshPro">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\Unity.TextMeshPro.dll</HintPath>
         </Reference>

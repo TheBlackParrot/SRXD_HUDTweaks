@@ -38,6 +38,7 @@ internal static class DomeHudPatches
     private static readonly int FaceColor = Shader.PropertyToID("_FaceColor");
 
     private static Transform? _trackInfoContainer;
+    private static Transform? _timeBarContainer;
 
     internal static async Task ResetTranslatedTexts()
     {
@@ -79,6 +80,7 @@ internal static class DomeHudPatches
         }
         
         _trackInfoContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Backing Container");
+        _timeBarContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
         
         _scoreText = __instance.number.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();
@@ -342,13 +344,18 @@ internal static class DomeHudPatches
 
     internal static void UpdateOffsets()
     {
-        if (_trackInfoContainer == null)
+        if (_trackInfoContainer == null ||
+            _timeBarContainer == null)
         {
             return;
         }
         
         _trackInfoContainer.localPosition =
             _trackInfoContainer.localPosition with { y = Plugin.TrackInfoVerticalOffset.Value };
+
+        RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
+        timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
+        timeBarTransform.anchorMax = timeBarTransform.anchorMax with { x = 0.5f + (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
     }
 
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateLayout))]
