@@ -310,7 +310,7 @@ public partial class Plugin
                 MainHudVerticalOffset.Value = value;
                 DomeHudPatches.UpdateOffsets();
             },
-            () => new IntRange(-10, 10),
+            () => new IntRange(-10, 11),
             v => v.ToString());
         #endregion
         
@@ -340,7 +340,7 @@ public partial class Plugin
                 TimeBarWidth.Value = value;
                 DomeHudPatches.UpdateOffsets();
             },
-            () => new IntRange(-10, 10),
+            () => new IntRange(-10, 11),
             v => v.ToString());
         #endregion
         
