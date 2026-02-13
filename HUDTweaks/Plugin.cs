@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using HUDTweaks.Patches;
+using TMPro;
 using UnityEngine;
 
 namespace HUDTweaks;
@@ -12,8 +15,11 @@ public partial class Plugin : BaseUnityPlugin
 {
     internal static ManualLogSource Log = null!;
     private static Harmony _harmony = null!;
-    
+    private static readonly int FaceColor = Shader.PropertyToID("_FaceColor");
+
     private const string TRANSLATION_PREFIX = $"{nameof(HUDTweaks)}_";
+
+    internal static ColorPalette WhitePalette = null!;
 
     private void Awake()
     {
@@ -29,6 +35,12 @@ public partial class Plugin : BaseUnityPlugin
 
     private void OnEnable()
     {
+        WhitePalette = ScriptableObject.CreateInstance<ColorPalette>();
+        WhitePalette.colorArrays = [new ColorPalette.ColorsArray()];
+        WhitePalette.colorArrays[0].colors = [Color.white];
+
+        MainCamera.OnCurrentCameraChanged += ForceMultiplierPalette;
+        
         _harmony.PatchAll();
     }
 
@@ -52,72 +64,62 @@ public partial class Plugin : BaseUnityPlugin
         
         return playStateContainer;
     }
+
+    // grabbing an object out of Resources, feel better modifying it at this point
+    private static void ForceMultiplierPalette(Camera? _ = null)
+    {
+        MainCamera.OnCurrentCameraChanged -= ForceMultiplierPalette;
+        Resources.FindObjectsOfTypeAll<ColorPalette>().First(x => x.name.Contains("Multiplier")).colorArrays[0].colors =
+        [
+            Multiplier1XColor.Value.ToColor(),
+            Multiplier2XColor.Value.ToColor(),
+            Multiplier3XColor.Value.ToColor(),
+            Multiplier4XColor.Value.ToColor()
+        ];
+    }
     
     internal static async Task UpdateColors()
     {
         PlayStateContainer playStateContainer = await GetPlayStateContainer();
-
-        Color textColor = new Color(NumberColor.Value.x, NumberColor.Value.y, NumberColor.Value.z);
-        playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors[1] = textColor;
-
-        /*Color[] colors =
-        [
-            Color.black
-        ];
-
-        ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
-        for (int i = 0; i < palette.colorArrays.Length; i++)
+        
+        playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors[1] = NumberColor.Value.ToColor();
+        
+        while (DomeHudPatches.ScoreTextMeshRenderer == null ||
+               DomeHudPatches.ComboTextMeshRenderer == null ||
+               DomeHudPatches.InfoTextMeshRenderer == null ||
+               DomeHudPatches.HealthTextMeshRenderer == null)
         {
-            palette.colorArrays[i].colors = colors;
+            await Awaitable.EndOfFrameAsync(); // akdfhskdfhsdfs
+        }
+        
+        Color textColor = TextColor.Value.ToColor();
+        DomeHudPatches.ScoreTextMeshRenderer.material.SetColor(FaceColor, textColor);
+        DomeHudPatches.ComboTextMeshRenderer.material.SetColor(FaceColor, textColor);
+        DomeHudPatches.InfoTextMeshRenderer.material.SetColor(FaceColor, textColor);
+        foreach (MeshRenderer meshRenderer in DomeHudPatches.TimeElementMeshRenderers)
+        {
+            meshRenderer.material.SetColor(FaceColor, TimeColor.Value.ToColor());
+        }
+        
+        Color healthColor = HealthColor.Value.ToColor();
+        DomeHudPatches.HealthTextMeshRenderer.material.SetColor(FaceColor, healthColor);
+        playStateContainer.Hud.healthBar.transform.GetComponent<MeshRenderer>().material.SetColor(FaceColor, healthColor);
+        
+        foreach (TMP_Text fcText in playStateContainer.Hud.fcTexts)
+        {
+            // we can't just define our own palettes with color here, as the game's not interpreting palette colors directly
+            // so we've *also* got to do this the hard way. sigh
+            fcText.transform.GetComponent<HdrMeshEffect>().Palette = WhitePalette;
+        }
+        playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStar").GetComponent<SpriteMesh>().Palette = WhitePalette;
+        playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStarOutine").GetComponent<SpriteMesh>().Palette = WhitePalette; // yep, outine
+        
+        foreach (MeshRenderer meshRenderer in DomeHudPatches.FcElementMeshRenderers)
+        {
+            meshRenderer.material.SetColor(FaceColor, PfcColor.Value.ToColor());
         }
 
-        playStateContainer.Hud.multiplierPalette = palette;
-
-        foreach (IPaletteColorizer paletteColorizer in playStateContainer.Hud._multiplierColoring)
-        {
-            paletteColorizer.Palette = palette;
-            paletteColorizer.ColorIndex = 0;
-        }*/
-
-        /*Color[] colors =
-        [
-            new(Multiplier1XColor.Value.x, Multiplier1XColor.Value.y, Multiplier1XColor.Value.z),
-            new(Multiplier2XColor.Value.x, Multiplier2XColor.Value.y, Multiplier2XColor.Value.z),
-            new(Multiplier3XColor.Value.x, Multiplier3XColor.Value.y, Multiplier3XColor.Value.z),
-            new(Multiplier4XColor.Value.x, Multiplier4XColor.Value.y, Multiplier4XColor.Value.z)
-        ];
-
-        /*foreach (string propertyName in playStateContainer.Hud.healthBar.material.GetPropertyNames(MaterialPropertyType.Vector))
-        {
-            Plugin.Log.LogInfo(propertyName);
-        }
-
-        foreach (Color colorPaletteColor in playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors)
-        {
-            Plugin.Log.LogInfo(colorPaletteColor);
-        }*/
-
-        /*
-        ColorPalette palette = ScriptableObject.CreateInstance<ColorPalette>();
-        palette.colorArrays[0].colors = colors;
-
-        playStateContainer.Hud.multiplierPalette = palette;
-        playStateContainer.Hud.multiplierBar._spriteMesh.Palette = palette;
-        foreach (IPaletteColorizer paletteColorizer in playStateContainer.Hud._multiplierColoring)
-        {
-            paletteColorizer.Palette = palette;
-        }
-
-        Color[] otherColors =
-        [
-            new(NumberColor.Value.x, NumberColor.Value.y, NumberColor.Value.z)
-        ];
-
-        ColorPalette otherPalette = ScriptableObject.CreateInstance<ColorPalette>();
-        otherPalette.colorArrays[0].colors = otherColors;
-
-        // ........this changes the textnumber colors? am i going insane?
-        playStateContainer.Hud.healthBar._spriteMesh.Palette = otherPalette;*/
+        ForceMultiplierPalette();
     }
 
     internal static async Task UpdateHudElementsVisibility()

@@ -15,19 +15,27 @@ public partial class Plugin
 {
     // note to self: BepInEx forces maximum values in the Color type to 1f, for. some reason
     
-    //private static readonly Vector3 BlueHUDColor = new(0f, 0.703f, 5.283f);
+    private static readonly Vector3 BlueHUDColor = new(0f, 0.703f, 5.283f);
+    private static readonly Vector3 RedHUDColor = new(2.996f, 0.063f, 0.157f);
     private static readonly Vector3 YellowHUDColor = new(4.977f, 0.859f, 0f);
+    private static readonly Vector3 CyanHUDColor = new(Color.cyan.r, Color.cyan.g, Color.cyan.b); // close enough
+    private static readonly Vector3 GreenHUDColor = new(Color.green.r, Color.green.g, Color.green.b); // close enough
     
     internal static ConfigEntry<bool> EnableAccuracyDisplay = null!;
     internal static ConfigEntry<bool> EnablePreciseHealth = null!;
     internal static ConfigEntry<bool> EnablePerfectPlusCount = null!;
     
-    /*internal static ConfigEntry<Vector3> Multiplier1XColor = null!;
+    internal static ConfigEntry<Vector3> Multiplier1XColor = null!;
     internal static ConfigEntry<Vector3> Multiplier2XColor = null!;
     internal static ConfigEntry<Vector3> Multiplier3XColor = null!;
-    internal static ConfigEntry<Vector3> Multiplier4XColor = null!;*/
+    internal static ConfigEntry<Vector3> Multiplier4XColor = null!;
     
     internal static ConfigEntry<Vector3> NumberColor = null!;
+    internal static ConfigEntry<Vector3> TextColor = null!;
+    internal static ConfigEntry<Vector3> TimeColor = null!;
+    internal static ConfigEntry<Vector3> HealthColor = null!;
+    internal static ConfigEntry<Vector3> PfcColor = null!;
+    internal static ConfigEntry<Vector3> FcColor = null!;
     
     internal static ConfigEntry<bool> EnableMultiplierBar = null!;
     internal static ConfigEntry<bool> EnableMultiplierText = null!;
@@ -89,7 +97,7 @@ public partial class Plugin
             "Show the ghostly transparent sides of the wheel (the grips)");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableWheelGrips)}", "Show wheel grips");
 
-        /*Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
+        Multiplier1XColor = Config.Bind("Colors", nameof(Multiplier1XColor), BlueHUDColor, 
             "Color for the multiplier at 1x");
         Multiplier2XColor = Config.Bind("Colors", nameof(Multiplier2XColor), BlueHUDColor, 
             "Color for the multiplier at 2x");
@@ -100,11 +108,26 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier1XColor)}", "1x multiplier color");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier2XColor)}", "2x multiplier color");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier3XColor)}", "3x multiplier color");
-        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier4XColor)}", "4x multiplier color");*/
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier4XColor)}", "4x multiplier color");
         
         NumberColor = Config.Bind("Colors", nameof(NumberColor), YellowHUDColor, 
-            "Color for numbers");
+            "Color for boldened numbers");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(NumberColor)}", "Number color");
+        TextColor = Config.Bind("Colors", nameof(TextColor), YellowHUDColor, 
+            "Color for standard text");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TextColor)}", "Standard text color");
+        TimeColor = Config.Bind("Colors", nameof(TimeColor), YellowHUDColor, 
+            "Color for time elements");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeColor)}", "Time color");
+        HealthColor = Config.Bind("Colors", nameof(HealthColor), RedHUDColor, 
+            "Color for health elements");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(HealthColor)}", "Health color");
+        PfcColor = Config.Bind("Colors", nameof(PfcColor), CyanHUDColor, 
+            "Color for PFC elements");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(PfcColor)}", "PFC color");
+        FcColor = Config.Bind("Colors", nameof(FcColor), GreenHUDColor, 
+            "Color for FC elements");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(FcColor)}", "FC color");
         
         TrackInfoText = Config.Bind("Info", nameof(TrackInfoText), "%title% - %artist%",
             "Format string for the track information");
@@ -301,97 +324,217 @@ public partial class Plugin
         numberColorInputB.InputField.SetText(NumberColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
         
-        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Extras", false);
+        #region TextColors
+        CustomGroup textColorGroup = UIHelper.CreateGroup(modGroup, "TextColorGroup");
+        textColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(textColorGroup, "TextColorLabel", $"{TRANSLATION_PREFIX}{nameof(TextColor)}");
         
-        #region EnableAccuracyDisplay
-        CustomGroup enableAccuracyDisplayGroup = UIHelper.CreateGroup(modGroup, "EnableAccuracyDisplayGroup");
-        enableAccuracyDisplayGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(enableAccuracyDisplayGroup, nameof(EnableAccuracyDisplay),
-            $"{TRANSLATION_PREFIX}{nameof(EnableAccuracyDisplay)}", EnableAccuracyDisplay.Value, value =>
-            {
-                EnableAccuracyDisplay.Value = value;
-                
-                if (!value)
-                {
-                    _ = DomeHudPatches.ResetTranslatedTexts();
-                }
-            });
-        #endregion
-        
-        #region EnablePerfectPlusCount
-        CustomGroup enablePerfectPlusCountGroup = UIHelper.CreateGroup(modGroup, "EnablePerfectPlusCountGroup");
-        enablePerfectPlusCountGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(enablePerfectPlusCountGroup, nameof(EnablePerfectPlusCount),
-            $"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", EnablePerfectPlusCount.Value, value =>
-            {
-                EnablePerfectPlusCount.Value = value;
-            });
-        #endregion
-        
-        #region EnablePreciseHealth
-        CustomGroup enablePreciseHealthGroup = UIHelper.CreateGroup(modGroup, "EnablePreciseHealthGroup");
-        enablePreciseHealthGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(enablePreciseHealthGroup, nameof(EnablePreciseHealth),
-            $"{TRANSLATION_PREFIX}{nameof(EnablePreciseHealth)}", EnablePreciseHealth.Value, value =>
-            {
-                EnablePreciseHealth.Value = value;
-
-                if (!value)
-                {
-                    _ = DomeHudPatches.ResetTranslatedTexts();
-                }
-            });
-        #endregion
-        
-        #region ShowTimeInBeats
-        CustomGroup showTimeInBeatsGroup = UIHelper.CreateGroup(modGroup, "ShowTimeInBeatsGroup");
-        showTimeInBeatsGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(showTimeInBeatsGroup, nameof(ShowTimeInBeats),
-            $"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", ShowTimeInBeats.Value, value =>
-            {
-                ShowTimeInBeats.Value = value;
-            });
-        #endregion
-        
-        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", false);
-        
-        #region TrackInfoText
-        CustomGroup trackInfoTextGroup = UIHelper.CreateGroup(modGroup, "TrackInfoTextGroup");
-        trackInfoTextGroup.LayoutDirection = Axis.Vertical;
-        
-        CustomInputField trackInfoTextInput = UIHelper.CreateInputField(trackInfoTextGroup, "TrackInfoTextInput", (_, value) =>
+        CustomInputField textColorInputR = UIHelper.CreateInputField(textColorGroup, "TextColorInputR", (s, newValue) =>
         {
-            TrackInfoText.Value = value;
-            
-            Task.Run(async () =>
+            if (!float.TryParse(newValue, out float value))
             {
-                try
-                {
-                    await Awaitable.MainThreadAsync();
-                    PlayStateContainer playStateContainer = await GetPlayStateContainer();
-                    playStateContainer.Hud.UpdateTranslatedElements();
-                }
-                catch (Exception ex)
-                {
-                    Log.LogError(ex);
-                }
-            });
+                return;
+            }
+
+            TextColor.Value = TextColor.Value with { x = Math.Max(value, 0f) };
+            _ = UpdateColors();
         });
-        trackInfoTextInput.InputField.SetText(TrackInfoText.Value);
-        #endregion
+        textColorInputR.InputField.SetText(TextColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField textColorInputG = UIHelper.CreateInputField(textColorGroup, "TextColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
 
-        #region TrackInfoTextTagsReference
-        CreateReferenceTagRow(modGroup, "Title");
-        CreateReferenceTagRow(modGroup, "Artist");
-        CreateReferenceTagRow(modGroup, "Duration");
-        CreateReferenceTagRow(modGroup, "Charter");
-        CreateReferenceTagRow(modGroup, "Difficulty");
-        CreateReferenceTagRow(modGroup, "Rating");
-        CreateReferenceTagRow(modGroup, "NewLineCharacter", @"\\n");
-        CreateReferenceTagRow(modGroup, "TabCharacter", @"\\t");
-        #endregion
+            TextColor.Value = TextColor.Value with { y = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        textColorInputG.InputField.SetText(TextColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField textColorInputB = UIHelper.CreateInputField(textColorGroup, "TextColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
 
-        /*#region Multiplier1XColors
+            TextColor.Value = TextColor.Value with { z = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        textColorInputB.InputField.SetText(TextColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region TimeColors
+        CustomGroup timeColorGroup = UIHelper.CreateGroup(modGroup, "TimeColorGroup");
+        timeColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(timeColorGroup, "TimeColorLabel", $"{TRANSLATION_PREFIX}{nameof(TimeColor)}");
+        
+        CustomInputField timeColorInputR = UIHelper.CreateInputField(timeColorGroup, "TimeColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            TimeColor.Value = TimeColor.Value with { x = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        timeColorInputR.InputField.SetText(TimeColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField timeColorInputG = UIHelper.CreateInputField(timeColorGroup, "TimeColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            TimeColor.Value = TimeColor.Value with { y = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        timeColorInputG.InputField.SetText(TimeColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField timeColorInputB = UIHelper.CreateInputField(timeColorGroup, "TimeColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            TimeColor.Value = TimeColor.Value with { z = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        timeColorInputB.InputField.SetText(TimeColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region HealthColors
+        CustomGroup healthColorGroup = UIHelper.CreateGroup(modGroup, "HealthColorGroup");
+        healthColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(healthColorGroup, "HealthColorLabel", $"{TRANSLATION_PREFIX}{nameof(HealthColor)}");
+        
+        CustomInputField healthColorInputR = UIHelper.CreateInputField(healthColorGroup, "HealthColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            HealthColor.Value = HealthColor.Value with { x = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        healthColorInputR.InputField.SetText(HealthColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField healthColorInputG = UIHelper.CreateInputField(healthColorGroup, "HealthColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            HealthColor.Value = HealthColor.Value with { y = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        healthColorInputG.InputField.SetText(HealthColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField healthColorInputB = UIHelper.CreateInputField(healthColorGroup, "HealthColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            HealthColor.Value = HealthColor.Value with { z = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        healthColorInputB.InputField.SetText(HealthColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region PfcColors
+        CustomGroup pfcColorGroup = UIHelper.CreateGroup(modGroup, "PfcColorGroup");
+        pfcColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(pfcColorGroup, "PfcColorLabel", $"{TRANSLATION_PREFIX}{nameof(PfcColor)}");
+        
+        CustomInputField pfcColorInputR = UIHelper.CreateInputField(pfcColorGroup, "PfcColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            PfcColor.Value = PfcColor.Value with { x = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        pfcColorInputR.InputField.SetText(PfcColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField pfcColorInputG = UIHelper.CreateInputField(pfcColorGroup, "PfcColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            PfcColor.Value = PfcColor.Value with { y = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        pfcColorInputG.InputField.SetText(PfcColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField pfcColorInputB = UIHelper.CreateInputField(pfcColorGroup, "PfcColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            PfcColor.Value = PfcColor.Value with { z = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        pfcColorInputB.InputField.SetText(PfcColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region FcColors
+        CustomGroup fcColorGroup = UIHelper.CreateGroup(modGroup, "FcColorGroup");
+        fcColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(fcColorGroup, "FcColorLabel", $"{TRANSLATION_PREFIX}{nameof(FcColor)}");
+        
+        CustomInputField fcColorInputR = UIHelper.CreateInputField(fcColorGroup, "FcColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            FcColor.Value = FcColor.Value with { x = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        fcColorInputR.InputField.SetText(FcColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField fcColorInputG = UIHelper.CreateInputField(fcColorGroup, "FcColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            FcColor.Value = FcColor.Value with { y = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        fcColorInputG.InputField.SetText(FcColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField fcColorInputB = UIHelper.CreateInputField(fcColorGroup, "FcColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            FcColor.Value = FcColor.Value with { z = Math.Max(value, 0f) };
+            _ = UpdateColors();
+        });
+        fcColorInputB.InputField.SetText(FcColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region Multiplier1XColors
         CustomGroup multiplier1XColorGroup = UIHelper.CreateGroup(modGroup, "Multiplier1XColorGroup");
         multiplier1XColorGroup.LayoutDirection = Axis.Horizontal;
         UIHelper.CreateLabel(multiplier1XColorGroup, "Multiplier1XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier1XColor)}");
@@ -557,6 +700,96 @@ public partial class Plugin
             _ = UpdateColors();
         });
         multiplier4XColorInputB.InputField.SetText(Multiplier4XColor.Value.z.ToString(CultureInfo.InvariantCulture));
-        #endregion*/
+        #endregion
+        
+        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Extras", false);
+        
+        #region EnableAccuracyDisplay
+        CustomGroup enableAccuracyDisplayGroup = UIHelper.CreateGroup(modGroup, "EnableAccuracyDisplayGroup");
+        enableAccuracyDisplayGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableAccuracyDisplayGroup, nameof(EnableAccuracyDisplay),
+            $"{TRANSLATION_PREFIX}{nameof(EnableAccuracyDisplay)}", EnableAccuracyDisplay.Value, value =>
+            {
+                EnableAccuracyDisplay.Value = value;
+                
+                if (!value)
+                {
+                    _ = DomeHudPatches.ResetTranslatedTexts();
+                }
+            });
+        #endregion
+        
+        #region EnablePerfectPlusCount
+        CustomGroup enablePerfectPlusCountGroup = UIHelper.CreateGroup(modGroup, "EnablePerfectPlusCountGroup");
+        enablePerfectPlusCountGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enablePerfectPlusCountGroup, nameof(EnablePerfectPlusCount),
+            $"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", EnablePerfectPlusCount.Value, value =>
+            {
+                EnablePerfectPlusCount.Value = value;
+            });
+        #endregion
+        
+        #region EnablePreciseHealth
+        CustomGroup enablePreciseHealthGroup = UIHelper.CreateGroup(modGroup, "EnablePreciseHealthGroup");
+        enablePreciseHealthGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enablePreciseHealthGroup, nameof(EnablePreciseHealth),
+            $"{TRANSLATION_PREFIX}{nameof(EnablePreciseHealth)}", EnablePreciseHealth.Value, value =>
+            {
+                EnablePreciseHealth.Value = value;
+
+                if (!value)
+                {
+                    _ = DomeHudPatches.ResetTranslatedTexts();
+                }
+            });
+        #endregion
+        
+        #region ShowTimeInBeats
+        CustomGroup showTimeInBeatsGroup = UIHelper.CreateGroup(modGroup, "ShowTimeInBeatsGroup");
+        showTimeInBeatsGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(showTimeInBeatsGroup, nameof(ShowTimeInBeats),
+            $"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", ShowTimeInBeats.Value, value =>
+            {
+                ShowTimeInBeats.Value = value;
+            });
+        #endregion
+        
+        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", false);
+        
+        #region TrackInfoText
+        CustomGroup trackInfoTextGroup = UIHelper.CreateGroup(modGroup, "TrackInfoTextGroup");
+        trackInfoTextGroup.LayoutDirection = Axis.Vertical;
+        
+        CustomInputField trackInfoTextInput = UIHelper.CreateInputField(trackInfoTextGroup, "TrackInfoTextInput", (_, value) =>
+        {
+            TrackInfoText.Value = value;
+            
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await Awaitable.MainThreadAsync();
+                    PlayStateContainer playStateContainer = await GetPlayStateContainer();
+                    playStateContainer.Hud.UpdateTranslatedElements();
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError(ex);
+                }
+            });
+        });
+        trackInfoTextInput.InputField.SetText(TrackInfoText.Value);
+        #endregion
+
+        #region TrackInfoTextTagsReference
+        CreateReferenceTagRow(modGroup, "Title");
+        CreateReferenceTagRow(modGroup, "Artist");
+        CreateReferenceTagRow(modGroup, "Duration");
+        CreateReferenceTagRow(modGroup, "Charter");
+        CreateReferenceTagRow(modGroup, "Difficulty");
+        CreateReferenceTagRow(modGroup, "Rating");
+        CreateReferenceTagRow(modGroup, "NewLineCharacter", @"\\n");
+        CreateReferenceTagRow(modGroup, "TabCharacter", @"\\t");
+        #endregion
     }
 }
