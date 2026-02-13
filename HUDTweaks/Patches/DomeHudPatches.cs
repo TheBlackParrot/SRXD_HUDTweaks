@@ -297,6 +297,7 @@ internal static class DomeHudPatches
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.AddToAccuracyLog))]
     [HarmonyPriority(Priority.Last)]
     [HarmonyPrefix]
+    // ReSharper disable once InconsistentNaming
     public static bool AddToAccuracyLogPatch(DomeHud __instance, ref NoteTimingAccuracy accuracy)
     {
         // re-creating this since i need to be in the middle of it, it seems like
@@ -337,6 +338,7 @@ internal static class DomeHudPatches
     
     [HarmonyPatch(typeof(ScoreState), nameof(ScoreState.AddOverbeat))]
     [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
     private static void ScoreState_AddOverbeatPatch(ScoreState __instance)
     {
         if (Plugin.ShowOverbeatsAsMisses.Value)
