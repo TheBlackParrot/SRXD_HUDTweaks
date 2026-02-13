@@ -59,7 +59,7 @@ internal static class DomeHudPatches
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
     [HarmonyPostfix]
     // ReSharper disable once InconsistentNaming
-    public static void ConfigUpdatePatches()
+    public static void OnBecameActive_Patch()
     {
         _ = Plugin.UpdateColors();
         _ = Plugin.UpdateHudElementsVisibility();
@@ -137,8 +137,7 @@ internal static class DomeHudPatches
             {
                 continue;
             }
-
-            Plugin.Log.LogInfo($"2: Added {meshRenderer.name}");
+            
             MultiplierElementMeshRenderers.Add(meshRenderer);
 
             if (transform.TryGetComponent(out HdrMeshEffect hdrMeshEffect))
@@ -151,11 +150,11 @@ internal static class DomeHudPatches
             }
         }
         
-        // whatever palette this is, it's only white. so that works out
         if (_palette == null)
         {
             _palette = Resources.FindObjectsOfTypeAll<ColorPalette>().First(x => x.name == "PaletteHUD");
         }
+        // whatever palette this is (how it determines it is. beyond me), it's only white. i think. so that works out.
         _palette.GlobalPaletteIndex = 1;
     }
 
