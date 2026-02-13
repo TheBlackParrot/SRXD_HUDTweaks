@@ -24,6 +24,7 @@ public partial class Plugin
     internal static ConfigEntry<bool> EnableAccuracyDisplay = null!;
     internal static ConfigEntry<bool> EnablePreciseHealth = null!;
     internal static ConfigEntry<bool> EnablePerfectPlusCount = null!;
+    internal static ConfigEntry<bool> ShowOverbeatsAsMisses = null!;
     
     internal static ConfigEntry<Vector3> Multiplier1XColor = null!;
     internal static ConfigEntry<Vector3> Multiplier2XColor = null!;
@@ -133,9 +134,12 @@ public partial class Plugin
             "Format string for the track information");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", "Track Information String");
         
-        IgnoreAccuracyTypesThreshold = Config.Bind("Info", nameof(IgnoreAccuracyTypesThreshold), StrippedNoteTimingAccuracy.PerfectPlus,
+        IgnoreAccuracyTypesThreshold = Config.Bind("General", nameof(IgnoreAccuracyTypesThreshold), StrippedNoteTimingAccuracy.PerfectPlus,
             "Ignore adding accuracy types above this value to the accuracy log (exclusive)");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(IgnoreAccuracyTypesThreshold)}", "Hide timings in the accuracy log above");
+        ShowOverbeatsAsMisses = Config.Bind("General", nameof(ShowOverbeatsAsMisses), false,
+            "Show overbeats as misses in the accuracy log");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(ShowOverbeatsAsMisses)}", "Show overbeats as misses");
         
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
         
@@ -751,6 +755,16 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", ShowTimeInBeats.Value, value =>
             {
                 ShowTimeInBeats.Value = value;
+            });
+        #endregion
+        
+        #region ShowOverbeatsAsMisses
+        CustomGroup showOverbeatsAsMissesGroup = UIHelper.CreateGroup(modGroup, "ShowOverbeatsAsMissesGroup");
+        showOverbeatsAsMissesGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(showOverbeatsAsMissesGroup, nameof(ShowOverbeatsAsMisses),
+            $"{TRANSLATION_PREFIX}{nameof(ShowOverbeatsAsMisses)}", ShowOverbeatsAsMisses.Value, value =>
+            {
+                ShowOverbeatsAsMisses.Value = value;
             });
         #endregion
         

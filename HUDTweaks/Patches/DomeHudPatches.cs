@@ -334,4 +334,14 @@ internal static class DomeHudPatches
         
         return false;
     }
+    
+    [HarmonyPatch(typeof(ScoreState), nameof(ScoreState.AddOverbeat))]
+    [HarmonyPostfix]
+    private static void ScoreState_AddOverbeatPatch(ScoreState __instance)
+    {
+        if (Plugin.ShowOverbeatsAsMisses.Value)
+        {
+            PlayState.Active.Hud.AddToAccuracyLog(NoteTimingAccuracy.Failed);
+        }
+    }
 }
