@@ -39,7 +39,3 @@
 
 ## Dependencies
 - SpinCore
-
----
-
-*(stuff is still being worked on, no release yet!)*
