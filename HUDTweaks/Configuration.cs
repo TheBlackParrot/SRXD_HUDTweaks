@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using BepInEx.Configuration;
+using HUDTweaks.Classes;
 using HUDTweaks.Patches;
 using SpinCore.Translation;
 using SpinCore.UI;
@@ -40,6 +41,8 @@ public partial class Plugin
     internal static ConfigEntry<string> TrackInfoText = null!;
     
     internal static ConfigEntry<bool> ShowTimeInBeats = null!;
+
+    internal static ConfigEntry<StrippedNoteTimingAccuracy> IgnoreAccuracyTypesThreshold = null!;
 
     private void RegisterConfigEntries()
     {
@@ -106,6 +109,10 @@ public partial class Plugin
         TrackInfoText = Config.Bind("Info", nameof(TrackInfoText), "%title% - %artist%",
             "Format string for the track information");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", "Track Information String");
+        
+        IgnoreAccuracyTypesThreshold = Config.Bind("Info", nameof(IgnoreAccuracyTypesThreshold), StrippedNoteTimingAccuracy.PerfectPlus,
+            "Ignore adding accuracy types above this value to the accuracy log (exclusive)");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(IgnoreAccuracyTypesThreshold)}", "Hide timings in the accuracy log above");
         
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
         
@@ -236,6 +243,15 @@ public partial class Plugin
             {
                 EnableWheelGrips.Value = value;
                 _ = UpdateHudElementsVisibility();
+            });
+        #endregion
+
+        #region IgnoreAccuracyTypesThreshold
+        CustomGroup ignoreAccuracyTypesThresholdGroup = UIHelper.CreateGroup(modGroup, "IgnoreAccuracyTypesThresholdGroup");
+        UIHelper.CreateSmallMultiChoiceButton(ignoreAccuracyTypesThresholdGroup, nameof(IgnoreAccuracyTypesThreshold),
+            $"{TRANSLATION_PREFIX}{nameof(IgnoreAccuracyTypesThreshold)}", IgnoreAccuracyTypesThreshold.Value, accuracy =>
+            {
+                IgnoreAccuracyTypesThreshold.Value = accuracy;
             });
         #endregion
         

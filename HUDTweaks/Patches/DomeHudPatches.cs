@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HarmonyLib;
+using HUDTweaks.Classes;
 using UnityEngine;
 
 namespace HUDTweaks.Patches;
@@ -158,6 +159,20 @@ internal static class DomeHudPatches
         __instance.trackLengthText.IntParam1 = finalBeat.FloorToInt();
         int lengthFraction = ((finalBeat % 1) * 100).FloorToInt();
         __instance.trackLengthText.IntParam2 = (lengthFraction - (lengthFraction % 50)) / 50;
+    }
+    
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.AddToAccuracyLog))]
+    [HarmonyPriority(Priority.Last)]
+    [HarmonyPrefix]
+    public static bool AddToAccuracyLogPatch(NoteTimingAccuracy accuracy)
+    {
+        if (accuracy is > NoteTimingAccuracy.PerfectPlus or NoteTimingAccuracy.Pending)
+        {
+            // not a "valid hit", always let it go through
+            return true;
+        }
+
+        return (StrippedNoteTimingAccuracy)accuracy <= Plugin.IgnoreAccuracyTypesThreshold.Value;
     }
 
     /*[HarmonyPatch(typeof(DomeHud), nameof(DomeHud.LateUpdate))]
