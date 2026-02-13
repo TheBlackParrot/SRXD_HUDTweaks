@@ -53,7 +53,7 @@ public partial class Plugin
 
     internal static ConfigEntry<StrippedNoteTimingAccuracy> IgnoreAccuracyTypesThreshold = null!;
     
-    internal static ConfigEntry<float> TrackInfoVerticalOffset = null!;
+    internal static ConfigEntry<int> TrackInfoVerticalOffset = null!;
     internal static ConfigEntry<int> TimeBarWidth = null!;
     internal static ConfigEntry<int> MainHudVerticalOffset = null!;
 
@@ -150,7 +150,7 @@ public partial class Plugin
         MainHudVerticalOffset = Config.Bind("Offsets", nameof(MainHudVerticalOffset), 0,
             "Vertical offset of the main HUD");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(MainHudVerticalOffset)}", "Main HUD vertical offset");
-        TrackInfoVerticalOffset = Config.Bind("Offsets", nameof(TrackInfoVerticalOffset), 0f,
+        TrackInfoVerticalOffset = Config.Bind("Offsets", nameof(TrackInfoVerticalOffset), 0,
             "Vertical offset of the track/chart info");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}", "Track info vertical offset");
         TimeBarWidth = Config.Bind("Offsets", nameof(TimeBarWidth), 0,
@@ -316,6 +316,18 @@ public partial class Plugin
         
         #region TrackInfoVerticalOffset
         CustomGroup trackInfoVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TrackInfoVerticalOffsetGroup");
+        UIHelper.CreateSmallMultiChoiceButton(trackInfoVerticalOffsetGroup, nameof(TrackInfoVerticalOffset), $"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}",
+            TrackInfoVerticalOffset.Value, (value) =>
+            {
+                TrackInfoVerticalOffset.Value = value;
+                DomeHudPatches.UpdateOffsets();
+            },
+            () => new IntRange(-10, 11),
+            v => v.ToString());
+        #endregion
+        
+        /*#region TrackInfoVerticalOffset
+        CustomGroup trackInfoVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TrackInfoVerticalOffsetGroup");
         trackInfoVerticalOffsetGroup.LayoutDirection = Axis.Horizontal;
         UIHelper.CreateLabel(trackInfoVerticalOffsetGroup, "TrackInfoVerticalOffsetLabel", $"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}");
         
@@ -330,7 +342,7 @@ public partial class Plugin
             DomeHudPatches.UpdateOffsets();
         });
         trackInfoVerticalOffsetInput.InputField.SetText(TrackInfoVerticalOffset.Value.ToString(CultureInfo.InvariantCulture));
-        #endregion
+        #endregion*/
         
         #region TimeBarWidth
         CustomGroup timeBarWidthGroup = UIHelper.CreateGroup(modGroup, "TimeBarWidthGroup");

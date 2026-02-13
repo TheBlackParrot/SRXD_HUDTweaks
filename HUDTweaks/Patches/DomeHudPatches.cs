@@ -357,7 +357,7 @@ internal static class DomeHudPatches
         }
         
         _trackInfoContainer.localPosition =
-            _trackInfoContainer.localPosition with { y = Plugin.TrackInfoVerticalOffset.Value };
+            _trackInfoContainer.localPosition with { y = Plugin.TrackInfoVerticalOffset.Value * 2 };
 
         RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
         timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
