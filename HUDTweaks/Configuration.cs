@@ -55,6 +55,7 @@ public partial class Plugin
     
     internal static ConfigEntry<float> TrackInfoVerticalOffset = null!;
     internal static ConfigEntry<int> TimeBarWidth = null!;
+    internal static ConfigEntry<int> MainHudVerticalOffset = null!;
 
     private void RegisterConfigEntries()
     {
@@ -146,6 +147,9 @@ public partial class Plugin
             "Show overbeats as misses in the accuracy log");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(ShowOverbeatsAsMisses)}", "Show overbeats as misses");
         
+        MainHudVerticalOffset = Config.Bind("Offsets", nameof(MainHudVerticalOffset), 0,
+            "Vertical offset of the main HUD");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(MainHudVerticalOffset)}", "Main HUD vertical offset");
         TrackInfoVerticalOffset = Config.Bind("Offsets", nameof(TrackInfoVerticalOffset), 0f,
             "Vertical offset of the track/chart info");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}", "Track info vertical offset");
@@ -297,6 +301,18 @@ public partial class Plugin
         UIHelper.CreateLabel(modGroup, "WhereAreMyTogglesPls", $"{TRANSLATION_PREFIX}OtherToggles");
         
         UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Offsets", false);
+        
+        #region MainHudVerticalOffset
+        CustomGroup mainHudVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "MainHudVerticalOffsetGroup");
+        UIHelper.CreateSmallMultiChoiceButton(mainHudVerticalOffsetGroup, nameof(MainHudVerticalOffset), $"{TRANSLATION_PREFIX}{nameof(MainHudVerticalOffset)}",
+            MainHudVerticalOffset.Value, (value) =>
+            {
+                MainHudVerticalOffset.Value = value;
+                DomeHudPatches.UpdateOffsets();
+            },
+            () => new IntRange(-10, 10),
+            v => v.ToString());
+        #endregion
         
         #region TrackInfoVerticalOffset
         CustomGroup trackInfoVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TrackInfoVerticalOffsetGroup");

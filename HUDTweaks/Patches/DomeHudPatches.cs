@@ -39,6 +39,8 @@ internal static class DomeHudPatches
 
     private static Transform? _trackInfoContainer;
     private static Transform? _timeBarContainer;
+    private static Transform? _mainHudLeftContainer;
+    private static Transform? _mainHudRightContainer;
 
     internal static async Task ResetTranslatedTexts()
     {
@@ -81,6 +83,8 @@ internal static class DomeHudPatches
         
         _trackInfoContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Backing Container");
         _timeBarContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
+        _mainHudLeftContainer = __instance.warpTransform.Find("XMover/HudRect/LeftContainer");
+        _mainHudRightContainer = __instance.warpTransform.Find("XMover/HudRect/RightContainer");
         
         _scoreText = __instance.number.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();
@@ -345,7 +349,9 @@ internal static class DomeHudPatches
     internal static void UpdateOffsets()
     {
         if (_trackInfoContainer == null ||
-            _timeBarContainer == null)
+            _timeBarContainer == null ||
+            _mainHudLeftContainer == null ||
+            _mainHudRightContainer == null)
         {
             return;
         }
@@ -356,6 +362,13 @@ internal static class DomeHudPatches
         RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
         timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
         timeBarTransform.anchorMax = timeBarTransform.anchorMax with { x = 0.5f + (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
+        
+        RectTransform leftBarTransform = _mainHudLeftContainer.GetComponent<RectTransform>();
+        leftBarTransform.offsetMin = leftBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+        leftBarTransform.offsetMax = leftBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+        RectTransform rightBarTransform = _mainHudRightContainer.GetComponent<RectTransform>();
+        rightBarTransform.offsetMin = rightBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+        rightBarTransform.offsetMax = rightBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
     }
 
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateLayout))]
