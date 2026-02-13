@@ -297,14 +297,41 @@ internal static class DomeHudPatches
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.AddToAccuracyLog))]
     [HarmonyPriority(Priority.Last)]
     [HarmonyPrefix]
-    public static bool AddToAccuracyLogPatch(NoteTimingAccuracy accuracy)
+    public static bool AddToAccuracyLogPatch(DomeHud __instance, ref NoteTimingAccuracy accuracy)
     {
-        if (accuracy is > NoteTimingAccuracy.PerfectPlus or NoteTimingAccuracy.Pending)
+        // re-creating this since i need to be in the middle of it, it seems like
+        
+        if (__instance.PlayState.PlayerSettings.NoPerfectPlus)
         {
-            // not a "valid hit", always let it go through
-            return true;
+            accuracy = accuracy switch
+            {
+                NoteTimingAccuracy.PerfectPlus => NoteTimingAccuracy.Perfect,
+                NoteTimingAccuracy.EarlyPerfectPlus => NoteTimingAccuracy.EarlyPerfect,
+                _ => accuracy
+            };
         }
 
-        return (StrippedNoteTimingAccuracy)accuracy <= Plugin.IgnoreAccuracyTypesThreshold.Value;
+        NoteTimingAccuracy signedAccuracy = accuracy.SetSignBit(false);
+        
+        if (signedAccuracy is >= NoteTimingAccuracy.Okay and <= NoteTimingAccuracy.PerfectPlus)
+        {
+            StrippedNoteTimingAccuracy stripped = (StrippedNoteTimingAccuracy)signedAccuracy;
+            if (stripped > Plugin.IgnoreAccuracyTypesThreshold.Value)
+            {
+                return false;
+            }
+        }
+        
+        // Okay has 2 possible readings: EarlyOkay is Early, regular Okay is Okay, so we check for that
+        AccuracyLogType logType = __instance.GetLogType(accuracy == NoteTimingAccuracy.EarlyOkay ? accuracy : signedAccuracy);
+        if (!logType)
+        {
+            return false;
+        }
+        
+        __instance._activeAccuracyLogInstances.SetActiveElement(__instance.currentLogIndex, logType.Get());
+        __instance.currentLogIndex++;
+        
+        return false;
     }
 }
