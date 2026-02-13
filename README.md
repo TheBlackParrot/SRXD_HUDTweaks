@@ -1,6 +1,12 @@
 # HUDTweaks
 **Mod for Spin Rhythm XD that adds more options and tweaks to the gameplay HUD**
 
+|                                                                                       |                                                                                       |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| ![Screenshot showcasing the HUDTweaks mod for Spin Rhythm XD](Assets/screenshot1.png) | ![Screenshot showcasing the HUDTweaks mod for Spin Rhythm XD](Assets/screenshot2.png) |
+| ![Screenshot showcasing the HUDTweaks mod for Spin Rhythm XD](Assets/screenshot3.png) | ![Screenshot showcasing the HUDTweaks mod for Spin Rhythm XD](Assets/screenshot4.png) |
+|                                                                                       |                                                                                       |
+
 ## Additions
 - Visibility toggles for HUD elements that do not have one:
   - Combo 
