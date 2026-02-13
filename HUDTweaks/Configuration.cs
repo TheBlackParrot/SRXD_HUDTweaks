@@ -52,12 +52,15 @@ public partial class Plugin
     internal static ConfigEntry<bool> ShowTimeInBeats = null!;
 
     internal static ConfigEntry<StrippedNoteTimingAccuracy> IgnoreAccuracyTypesThreshold = null!;
+    
+    internal static ConfigEntry<float> TrackInfoVerticalOffset = null!;
 
     private void RegisterConfigEntries()
     {
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Colors", "Colors");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Extras", "Extras");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Offsets", "Offsets");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}GitHubButtonText", $"{nameof(HUDTweaks)} Releases (GitHub)");
         
         EnableAccuracyDisplay = Config.Bind("General", nameof(EnableAccuracyDisplay), false,
@@ -141,6 +144,10 @@ public partial class Plugin
         ShowOverbeatsAsMisses = Config.Bind("General", nameof(ShowOverbeatsAsMisses), false,
             "Show overbeats as misses in the accuracy log");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(ShowOverbeatsAsMisses)}", "Show overbeats as misses");
+        
+        TrackInfoVerticalOffset = Config.Bind("Offsets", nameof(TrackInfoVerticalOffset), 0f,
+            "Vertical offset of the track/chart info");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}", "Track info vertical offset");
         
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
         
@@ -284,6 +291,26 @@ public partial class Plugin
         #endregion
         
         UIHelper.CreateLabel(modGroup, "WhereAreMyTogglesPls", $"{TRANSLATION_PREFIX}OtherToggles");
+        
+        UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Offsets", false);
+        
+        #region TrackInfoVerticalOffset
+        CustomGroup trackInfoVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TrackInfoVerticalOffsetGroup");
+        trackInfoVerticalOffsetGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(trackInfoVerticalOffsetGroup, "TrackInfoVerticalOffsetLabel", $"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}");
+        
+        CustomInputField trackInfoVerticalOffsetInput = UIHelper.CreateInputField(trackInfoVerticalOffsetGroup, "TrackInfoVerticalOffsetInput", (_, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            TrackInfoVerticalOffset.Value = value;
+            DomeHudPatches.UpdateOffsets();
+        });
+        trackInfoVerticalOffsetInput.InputField.SetText(TrackInfoVerticalOffset.Value.ToString(CultureInfo.InvariantCulture));
+        #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "ModGroupHeader", $"{TRANSLATION_PREFIX}Colors", false);
         

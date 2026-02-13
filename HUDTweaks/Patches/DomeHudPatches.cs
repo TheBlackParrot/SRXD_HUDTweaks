@@ -37,6 +37,8 @@ internal static class DomeHudPatches
     private static ColorPalette? _palette;
     private static readonly int FaceColor = Shader.PropertyToID("_FaceColor");
 
+    private static Transform? _trackInfoContainer;
+
     internal static async Task ResetTranslatedTexts()
     {
         if (_scoreText?.TryGetComponent(out TranslatedTextMeshPro scoreTranslatedTextMeshPro) ?? false)
@@ -75,6 +77,8 @@ internal static class DomeHudPatches
             // if it's set, we gathered everything already
             return;
         }
+        
+        _trackInfoContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Backing Container");
         
         _scoreText = __instance.number.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();
@@ -335,6 +339,25 @@ internal static class DomeHudPatches
         
         return false;
     }
+
+    internal static void UpdateOffsets()
+    {
+        if (_trackInfoContainer == null)
+        {
+            return;
+        }
+        
+        _trackInfoContainer.localPosition =
+            _trackInfoContainer.localPosition with { y = Plugin.TrackInfoVerticalOffset.Value };
+    }
+
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateLayout))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    private static void DomeHud_UpdateLayoutPatch(DomeHud __instance)
+    {
+        UpdateOffsets();
+    } 
     
     [HarmonyPatch(typeof(ScoreState), nameof(ScoreState.AddOverbeat))]
     [HarmonyPostfix]
