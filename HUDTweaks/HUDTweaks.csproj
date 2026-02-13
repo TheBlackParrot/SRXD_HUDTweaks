@@ -70,6 +70,12 @@
         <Reference Include="UnityEngine.UI">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\UnityEngine.UI.dll</HintPath>
         </Reference>
+        <Reference Include="System.Net.Http">
+            <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\System.Net.Http.dll</HintPath>
+        </Reference>
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>$(BaseGameDir)\BepInEx\plugins\Newtonsoft.Json.dll</HintPath>
+        </Reference>
         <Reference Include="SpinCore">
             <HintPath>$(BaseGameDir)\BepInEx\plugins\SpinCore.dll</HintPath>
         </Reference>

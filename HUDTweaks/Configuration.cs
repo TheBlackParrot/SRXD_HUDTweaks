@@ -58,6 +58,7 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Colors", "Colors");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Extras", "Extras");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}GitHubButtonText", $"{nameof(HUDTweaks)} Releases (GitHub)");
         
         EnableAccuracyDisplay = Config.Bind("General", nameof(EnableAccuracyDisplay), false,
             "Show the current accuracy in place of the \"SCORE\" label");
@@ -805,5 +806,10 @@ public partial class Plugin
         CreateReferenceTagRow(modGroup, "NewLineCharacter", @"\\n");
         CreateReferenceTagRow(modGroup, "TabCharacter", @"\\t");
         #endregion
+        
+        UIHelper.CreateButton(modGroup, $"Open{nameof(HUDTweaks)}RepositoryButton", $"{TRANSLATION_PREFIX}GitHubButtonText", () =>
+        {
+            Application.OpenURL($"https://github.com/TheBlackParrot/{REPO_NAME}/releases/latest");
+        });
     }
 }
