@@ -11,6 +11,7 @@
   - Score
   - Track highlights/track strip
   - Wheel grips
+  - Hiding accuracy log rows for timings above a set threshold
 - Augmented info displays:
   - The score label can be changed to show current accuracy and Perfect+ counts
   - The health label can be changed to show the current *precise* health value
@@ -18,7 +19,11 @@
   - Track information can be changed using custom formatting tags
 - Colors:
   - Bold numbers for combo and score values
-  - *(other colors soon tm)*
+  - Multiplier elements
+  - Standard HUD text
+  - Time elements
+  - Health elements
+  - PFC/FC indicators
 
 ## Dependencies
 - SpinCore
