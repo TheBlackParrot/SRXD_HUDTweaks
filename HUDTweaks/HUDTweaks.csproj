@@ -4,7 +4,7 @@
         <TargetFramework>net472</TargetFramework>
         <AssemblyName>HUDTweaks</AssemblyName>
         <Product>HUDTweaks</Product>
-        <Version>0.0.0</Version>
+        <Version>0.0.1</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
         <RestoreAdditionalProjectSources>
@@ -56,6 +56,9 @@
         <Reference Include="Assembly-CSharp">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\Assembly-CSharp.dll</HintPath>
             <Publicize>true</Publicize>
+        </Reference>
+        <Reference Include="SSD.Game">
+            <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\SSD.Game.dll</HintPath>
         </Reference>
         <Reference Include="SSD.Utility">
             <HintPath>$(BaseGameDir)\SpinRhythm_Data\Managed\SSD.Utility.dll</HintPath>

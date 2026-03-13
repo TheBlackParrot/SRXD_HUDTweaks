@@ -370,8 +370,13 @@ internal static class DomeHudPatches
             return;
         }
         
+        int hudTrackInfoSetting = XROverridablePlayerSettings<HUDPlayerSettings>.Instance.HudTrackInfo.Value;
+        
+        // game's doing something finicky with alpha (and _trackInfoContainer's enabled state),
+        // but if i set the text on the element, it overrides whatever the game's doing
+        // so. this. i hate it.
         _trackInfoContainer.localPosition =
-            _trackInfoContainer.localPosition with { y = Plugin.TrackInfoVerticalOffset.Value * 2 };
+            _trackInfoContainer.localPosition with { y = (hudTrackInfoSetting == 2 ? Plugin.TrackInfoVerticalOffset.Value * 2 : -99999) };
 
         RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
         timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
