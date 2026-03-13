@@ -891,8 +891,11 @@ public partial class Plugin
                 try
                 {
                     await Awaitable.MainThreadAsync();
-                    PlayStateContainer playStateContainer = await GetPlayStateContainer();
-                    playStateContainer.Hud.UpdateTranslatedElements();
+                    PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
+                    foreach (PlayStateContainer playStateContainer in playStateContainers)
+                    {
+                        playStateContainer.Hud.UpdateTranslatedElements();
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -120,15 +120,15 @@ public partial class Plugin : BaseUnityPlugin
         });
     }
 
-    private static async Task<PlayStateContainer> GetPlayStateContainer()
+    private static async Task<PlayStateContainer[]> GetPlayStateContainers()
     {
-        PlayStateContainer? playStateContainer = null;
+        PlayStateContainer[] playStateContainer = FindObjectsByType<PlayStateContainer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         
-        while (playStateContainer == null)
+        while (playStateContainer.Length <= 0)
         {
-            playStateContainer = GameObject.Find("PlayStateContainer(Clone)")?.GetComponent<PlayStateContainer>();
+            playStateContainer = FindObjectsByType<PlayStateContainer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
 #if DEBUG
-            Log.LogInfo("Waiting for play state container");
+            Log.LogInfo("Waiting for play state containers");
 #endif
             await Awaitable.EndOfFrameAsync();
         }
@@ -151,9 +151,7 @@ public partial class Plugin : BaseUnityPlugin
     
     internal static async Task UpdateColors()
     {
-        PlayStateContainer playStateContainer = await GetPlayStateContainer();
-        
-        playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors[1] = NumberColor.Value.ToColor();
+        PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
         
         while (DomeHudPatches.ScoreTextMeshRenderer == null ||
                DomeHudPatches.ComboTextMeshRenderer == null ||
@@ -161,6 +159,24 @@ public partial class Plugin : BaseUnityPlugin
                DomeHudPatches.HealthTextMeshRenderer == null)
         {
             await Awaitable.EndOfFrameAsync(); // akdfhskdfhsdfs
+        }
+
+        foreach (PlayStateContainer playStateContainer in playStateContainers)
+        {
+            playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors[1] = NumberColor.Value.ToColor();
+            
+            Color healthColor = HealthColor.Value.ToColor();
+            DomeHudPatches.HealthTextMeshRenderer.material.SetColor(FaceColor, healthColor);
+            playStateContainer.Hud.healthBar.transform.GetComponent<MeshRenderer>().material.SetColor(FaceColor, healthColor);
+            
+            foreach (TMP_Text fcText in playStateContainer.Hud.fcTexts)
+            {
+                // we can't just define our own palettes with color here, as the game's not interpreting palette colors directly
+                // so we've *also* got to do this the hard way. sigh
+                fcText.transform.GetComponent<HdrMeshEffect>().Palette = WhitePalette;
+            }
+            playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStar").GetComponent<SpriteMesh>().Palette = WhitePalette;
+            playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStarOutine").GetComponent<SpriteMesh>().Palette = WhitePalette; // yep, outine
         }
         
         Color textColor = TextColor.Value.ToColor();
@@ -171,19 +187,6 @@ public partial class Plugin : BaseUnityPlugin
         {
             meshRenderer.material.SetColor(FaceColor, TimeColor.Value.ToColor());
         }
-        
-        Color healthColor = HealthColor.Value.ToColor();
-        DomeHudPatches.HealthTextMeshRenderer.material.SetColor(FaceColor, healthColor);
-        playStateContainer.Hud.healthBar.transform.GetComponent<MeshRenderer>().material.SetColor(FaceColor, healthColor);
-        
-        foreach (TMP_Text fcText in playStateContainer.Hud.fcTexts)
-        {
-            // we can't just define our own palettes with color here, as the game's not interpreting palette colors directly
-            // so we've *also* got to do this the hard way. sigh
-            fcText.transform.GetComponent<HdrMeshEffect>().Palette = WhitePalette;
-        }
-        playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStar").GetComponent<SpriteMesh>().Palette = WhitePalette;
-        playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStarOutine").GetComponent<SpriteMesh>().Palette = WhitePalette; // yep, outine
         
         foreach (MeshRenderer meshRenderer in DomeHudPatches.FcElementMeshRenderers)
         {
@@ -200,49 +203,54 @@ public partial class Plugin : BaseUnityPlugin
 
     internal static async Task UpdateHudElementsVisibility()
     {
-        PlayStateContainer playStateContainer = await GetPlayStateContainer();
-        DomeHud domeHud = playStateContainer.Hud;
-
-        // multiplier text
-        domeHud.multiplier.transform.parent.gameObject.SetActive(EnableMultiplierText.Value);
+        PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
         
-        // combo text
-        domeHud.streak.transform.parent.parent.gameObject.SetActive(EnableCombo.Value);
-        
-        // score text
-        domeHud.number.transform.parent.parent.gameObject.SetActive(EnableScore.Value);
-        
-        playStateContainer._trackSkinVisuals?.transform.Find("TrackStrip")?.gameObject.SetActive(EnableTrackStrips.Value);
-        playStateContainer.WheelVisuals?.leftGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
-        playStateContainer.WheelVisuals?.rightGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
-
-        for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
+        foreach (PlayStateContainer playStateContainer in playStateContainers)
         {
-            GameObject rightContainerObject = domeHud.healthBar.transform.parent.GetChild(i).gameObject;
-            
-            if (rightContainerObject.name.Contains("Health"))
+            DomeHud domeHud = playStateContainer.Hud;
+
+            // multiplier text
+            domeHud.multiplier.transform.parent.gameObject.SetActive(EnableMultiplierText.Value);
+
+            // combo text
+            domeHud.streak.transform.parent.parent.gameObject.SetActive(EnableCombo.Value);
+
+            // score text
+            domeHud.number.transform.parent.parent.gameObject.SetActive(EnableScore.Value);
+
+            playStateContainer._trackSkinVisuals?.transform.Find("TrackStrip")?.gameObject
+                .SetActive(EnableTrackStrips.Value);
+            playStateContainer.WheelVisuals?.leftGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
+            playStateContainer.WheelVisuals?.rightGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
+
+            for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
             {
-                rightContainerObject.SetActive(EnableHealthBar.Value);
+                GameObject rightContainerObject = domeHud.healthBar.transform.parent.GetChild(i).gameObject;
+
+                if (rightContainerObject.name.Contains("Health"))
+                {
+                    rightContainerObject.SetActive(EnableHealthBar.Value);
+                }
+
+                if (rightContainerObject.name == "HurtBacking")
+                {
+                    rightContainerObject.SetActive(EnableHurtFlashing.Value);
+                }
             }
 
-            if (rightContainerObject.name == "HurtBacking")
+            for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
             {
-                rightContainerObject.SetActive(EnableHurtFlashing.Value);
-            }
-        }
-        
-        for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
-        {
-            GameObject leftContainerObject = domeHud.multiplierBar.transform.parent.GetChild(i).gameObject;
-            
-            if (leftContainerObject.name.Contains("MultiplierBar"))
-            {
-                leftContainerObject.SetActive(EnableMultiplierBar.Value);
-            }
-            
-            if (leftContainerObject.name == "HurtBacking")
-            {
-                leftContainerObject.SetActive(EnableHurtFlashing.Value);
+                GameObject leftContainerObject = domeHud.multiplierBar.transform.parent.GetChild(i).gameObject;
+
+                if (leftContainerObject.name.Contains("MultiplierBar"))
+                {
+                    leftContainerObject.SetActive(EnableMultiplierBar.Value);
+                }
+
+                if (leftContainerObject.name == "HurtBacking")
+                {
+                    leftContainerObject.SetActive(EnableHurtFlashing.Value);
+                }
             }
         }
     }
