@@ -11,41 +11,39 @@ namespace HUDTweaks.Patches;
 
 internal class DomeHudContainer
 {
-    private DomeHud _domeHud;
+    private readonly DomeHud _domeHud;
     
-    private Transform _scoreText;
-    private CustomTextMeshPro _scoreTextTMP;
-    internal MeshRenderer ScoreTextMeshRenderer;
+    private readonly Transform _scoreText;
+    private readonly CustomTextMeshPro _scoreTextTMP;
+    internal readonly MeshRenderer ScoreTextMeshRenderer;
     
-    private Transform _healthText;
-    private CustomTextMeshPro _healthTextTMP;
-    internal MeshRenderer HealthTextMeshRenderer;
-    
-    private Transform _comboText;
-    internal MeshRenderer ComboTextMeshRenderer;
-    
-    private Transform _infoText;
-    internal MeshRenderer InfoTextMeshRenderer;
-    
-    private readonly List<Transform> TimeElements = [];
-    internal List<MeshRenderer> TimeElementMeshRenderers = [];
+    private readonly Transform _healthText;
+    private readonly CustomTextMeshPro _healthTextTMP;
+    internal readonly MeshRenderer HealthTextMeshRenderer;
 
-    private readonly List<Transform> FcElements = [];
-    internal readonly List<MeshRenderer> FcElementMeshRenderers = [];
-    
-    private readonly List<Transform> MultiplierElements = [];
-    private readonly List<MeshRenderer> MultiplierElementMeshRenderers = [];
-    
-    private readonly List<Transform> HurtBackingElements = [];
-    internal readonly List<MeshRenderer> HurtBackingElementMeshRenderers = [];
-    
-    private ColorPalette _palette;
-    private readonly int FaceColor = Shader.PropertyToID("_FaceColor");
+    internal readonly MeshRenderer ComboTextMeshRenderer;
 
-    private Transform _trackInfoContainer;
-    private Transform _timeBarContainer;
-    private Transform _mainHudLeftContainer;
-    private Transform _mainHudRightContainer;
+    internal readonly MeshRenderer InfoTextMeshRenderer;
+    
+    private readonly List<Transform> _timeElements = [];
+    internal readonly List<MeshRenderer> TimeElementMeshRenderers;
+
+    private readonly List<Transform> _fcElements = [];
+    internal readonly List<MeshRenderer> FcElementMeshRenderers;
+    
+    private readonly List<Transform> _multiplierElements = [];
+    private readonly List<MeshRenderer> _multiplierElementMeshRenderers;
+    
+    private readonly List<Transform> _hurtBackingElements = [];
+    internal readonly List<MeshRenderer> HurtBackingElementMeshRenderers;
+    
+    private readonly ColorPalette _palette;
+    private readonly int _faceColor = Shader.PropertyToID("_FaceColor");
+
+    private readonly Transform _trackInfoContainer;
+    private readonly Transform _timeBarContainer;
+    private readonly Transform _mainHudLeftContainer;
+    private readonly Transform _mainHudRightContainer;
 
     public DomeHudContainer(DomeHud domeHud)
     {
@@ -66,26 +64,30 @@ internal class DomeHudContainer
         HealthTextMeshRenderer = _healthText.GetComponent<MeshRenderer>();
         _healthText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
         
-        _comboText = domeHud.streak.transform.parent.parent.Find("StreakText");
-        ComboTextMeshRenderer = _comboText.GetComponent<MeshRenderer>();
-        _comboText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
+        Transform comboText = domeHud.streak.transform.parent.parent.Find("StreakText");
+        ComboTextMeshRenderer = comboText.GetComponent<MeshRenderer>();
+        comboText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
         
-        _infoText = domeHud.trackTitleText.transform;
-        InfoTextMeshRenderer = _infoText.GetComponent<MeshRenderer>();
-        _infoText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
+        Transform infoText = domeHud.trackTitleText.transform;
+        InfoTextMeshRenderer = infoText.GetComponent<MeshRenderer>();
+        infoText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
         
         Transform timeContainer = domeHud.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
-        TimeElements.Add(timeContainer.Find("TrackTimePassedText"));
-        TimeElements.Add(timeContainer.Find("TrackLengthText"));
+        _timeElements.Add(timeContainer.Find("TrackTimePassedText"));
+        _timeElements.Add(timeContainer.Find("TrackLengthText"));
         Transform timeBarContainer = timeContainer.Find("Time Bar Fill");
         for (int i = 0; i < timeBarContainer.childCount; i++)
         {
-            TimeElements.Add(timeBarContainer.GetChild(i));   
+            _timeElements.Add(timeBarContainer.GetChild(i));   
         }
-        TimeElements.Add(timeContainer.Find("Time Bar Fill Scaled"));
+        _timeElements.Add(timeContainer.Find("Time Bar Fill Scaled"));
 
-        TimeElementMeshRenderers = TimeElements.Select(x => x.GetComponent<MeshRenderer>()).ToList();
-        foreach (Transform transform in TimeElements)
+        TimeElementMeshRenderers = _timeElements.Select(x => x.GetComponent<MeshRenderer>()).ToList();
+        FcElementMeshRenderers = [];
+        _multiplierElementMeshRenderers = [];
+        HurtBackingElementMeshRenderers = [];
+        
+        foreach (Transform transform in _timeElements)
         {
             if (transform.TryGetComponent(out HdrMeshEffect hdrMeshEffect))
             {
@@ -93,24 +95,24 @@ internal class DomeHudContainer
             }
         }
         
-        FcElements.Add(domeHud.fcTexts[0].transform.parent.Find("FcStar"));
-        FcElements.Add(domeHud.fcTexts[0].transform.parent.Find("FcStarOutine")); // yep, outine
+        _fcElements.Add(domeHud.fcTexts[0].transform.parent.Find("FcStar"));
+        _fcElements.Add(domeHud.fcTexts[0].transform.parent.Find("FcStarOutine")); // yep, outine
         foreach (TMP_Text fcText in domeHud.fcTexts)
         {
-            FcElements.Add(fcText.transform);
+            _fcElements.Add(fcText.transform);
         }
-        foreach (Transform transform in FcElements)
+        foreach (Transform transform in _fcElements)
         {
             FcElementMeshRenderers.Add(transform.GetComponent<MeshRenderer>());
         }
         
-        MultiplierElements.Add(domeHud.multiplierBar.transform);
+        _multiplierElements.Add(domeHud.multiplierBar.transform);
         for(int i = 0; i < domeHud.multiplier.transform.parent.childCount; i++)
         {
-            MultiplierElements.Add(domeHud.multiplier.transform.parent.GetChild(i));
+            _multiplierElements.Add(domeHud.multiplier.transform.parent.GetChild(i));
         }
         
-        foreach (Transform transform in MultiplierElements)
+        foreach (Transform transform in _multiplierElements)
         {
             MeshRenderer? meshRenderer = transform.GetComponent<MeshRenderer>();
             if (meshRenderer == null)
@@ -118,7 +120,7 @@ internal class DomeHudContainer
                 continue;
             }
             
-            MultiplierElementMeshRenderers.Add(meshRenderer);
+            _multiplierElementMeshRenderers.Add(meshRenderer);
 
             if (transform.TryGetComponent(out HdrMeshEffect hdrMeshEffect))
             {
@@ -130,9 +132,9 @@ internal class DomeHudContainer
             }
         }
         
-        HurtBackingElements.Add(_mainHudLeftContainer.Find("HurtBacking/Quad"));
-        HurtBackingElements.Add(_mainHudRightContainer.Find("HurtBacking/Quad"));
-        foreach (Transform transform in HurtBackingElements)
+        _hurtBackingElements.Add(_mainHudLeftContainer.Find("HurtBacking/Quad"));
+        _hurtBackingElements.Add(_mainHudRightContainer.Find("HurtBacking/Quad"));
+        foreach (Transform transform in _hurtBackingElements)
         {
             HurtBackingElementMeshRenderers.Add(transform.GetComponent<MeshRenderer>());
             if (transform.TryGetComponent(out SpriteMesh spriteMesh))
@@ -190,7 +192,7 @@ internal class DomeHudContainer
         FullComboState fcState = _domeHud._playState?.scoreState?.fullComboState ?? FullComboState.None;
         foreach (MeshRenderer meshRenderer in FcElementMeshRenderers)
         {
-            meshRenderer.material.SetColor(FaceColor,
+            meshRenderer.material.SetColor(_faceColor,
                 fcState == FullComboState.PerfectPlus
                     ? Plugin.PfcColor.Value.ToColor()
                     : Plugin.FcColor.Value.ToColor());
@@ -213,9 +215,9 @@ internal class DomeHudContainer
             _ => Plugin.Multiplier4XColor.Value.ToColor()
         };
         
-        foreach (MeshRenderer? meshRenderer in MultiplierElementMeshRenderers)
+        foreach (MeshRenderer? meshRenderer in _multiplierElementMeshRenderers)
         {
-            meshRenderer?.material.SetColor(FaceColor, color);
+            meshRenderer?.material.SetColor(_faceColor, color);
         }
     }
 
