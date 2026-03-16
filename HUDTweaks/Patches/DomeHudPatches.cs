@@ -8,106 +8,72 @@ using UnityEngine;
 
 namespace HUDTweaks.Patches;
 
-[HarmonyPatch]
-internal static class DomeHudPatches
+internal class DomeHudContainer
 {
-    private static Transform? _scoreText;
-    private static CustomTextMeshPro? _scoreTextTMP;
-    internal static MeshRenderer? ScoreTextMeshRenderer;
+    private DomeHud _domeHud;
     
-    private static Transform? _healthText;
-    private static CustomTextMeshPro? _healthTextTMP;
-    internal static MeshRenderer? HealthTextMeshRenderer;
+    private Transform _scoreText;
+    private CustomTextMeshPro _scoreTextTMP;
+    internal MeshRenderer ScoreTextMeshRenderer;
     
-    private static Transform? _comboText;
-    internal static MeshRenderer? ComboTextMeshRenderer;
+    private Transform _healthText;
+    private CustomTextMeshPro _healthTextTMP;
+    internal MeshRenderer HealthTextMeshRenderer;
     
-    private static Transform? _infoText;
-    internal static MeshRenderer? InfoTextMeshRenderer;
+    private Transform _comboText;
+    internal MeshRenderer ComboTextMeshRenderer;
+    
+    private Transform _infoText;
+    internal MeshRenderer InfoTextMeshRenderer;
+    
+    private readonly List<Transform> TimeElements = [];
+    internal List<MeshRenderer> TimeElementMeshRenderers = [];
 
-    private static readonly List<Transform> TimeElements = [];
-    internal static List<MeshRenderer> TimeElementMeshRenderers = [];
-
-    private static readonly List<Transform> FcElements = [];
-    internal static readonly List<MeshRenderer> FcElementMeshRenderers = [];
+    private readonly List<Transform> FcElements = [];
+    internal readonly List<MeshRenderer> FcElementMeshRenderers = [];
     
-    private static readonly List<Transform> MultiplierElements = [];
-    private static readonly List<MeshRenderer> MultiplierElementMeshRenderers = [];
+    private readonly List<Transform> MultiplierElements = [];
+    private readonly List<MeshRenderer> MultiplierElementMeshRenderers = [];
     
-    private static readonly List<Transform> HurtBackingElements = [];
-    internal static readonly List<MeshRenderer> HurtBackingElementMeshRenderers = [];
+    private readonly List<Transform> HurtBackingElements = [];
+    internal readonly List<MeshRenderer> HurtBackingElementMeshRenderers = [];
     
-    private static ColorPalette? _palette;
-    private static readonly int FaceColor = Shader.PropertyToID("_FaceColor");
+    private ColorPalette _palette;
+    private readonly int FaceColor = Shader.PropertyToID("_FaceColor");
 
-    private static Transform? _trackInfoContainer;
-    private static Transform? _timeBarContainer;
-    private static Transform? _mainHudLeftContainer;
-    private static Transform? _mainHudRightContainer;
+    private Transform _trackInfoContainer;
+    private Transform _timeBarContainer;
+    private Transform _mainHudLeftContainer;
+    private Transform _mainHudRightContainer;
 
-    internal static async Task ResetTranslatedTexts()
+    public DomeHudContainer(DomeHud domeHud)
     {
-        if (_scoreText?.TryGetComponent(out TranslatedTextMeshPro scoreTranslatedTextMeshPro) ?? false)
-        {
-            scoreTranslatedTextMeshPro.Translation = "";
-            await Awaitable.EndOfFrameAsync();
-            scoreTranslatedTextMeshPro.Translation = "Score";
-        }
-
-        // ReSharper disable once InvertIf
-        if (_healthText?.TryGetComponent(out TranslatedTextMeshPro healthTranslatedTextMeshPro) ?? false)
-        {
-            healthTranslatedTextMeshPro.Translation = "";
-            await Awaitable.EndOfFrameAsync();
-            healthTranslatedTextMeshPro.Translation = "Health";
-        }
-    }
-
-    [HarmonyPatch(typeof(PlayingTrackGameState), nameof(PlayingTrackGameState.OnBecameActive))]
-    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
-    [HarmonyPostfix]
-    // ReSharper disable once InconsistentNaming
-    public static void OnBecameActive_Patch()
-    {
-        _ = Plugin.UpdateColors();
-        _ = Plugin.UpdateHudElementsVisibility();
-    }
-
-    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
-    [HarmonyPostfix]
-    // ReSharper disable once InconsistentNaming
-    public static void DomeHud_InitPatch(DomeHud __instance)
-    {
-        if (_scoreText != null)
-        {
-            // if it's set, we gathered everything already
-            return;
-        }
+        _domeHud = domeHud;
         
-        _trackInfoContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Backing Container");
-        _timeBarContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
-        _mainHudLeftContainer = __instance.warpTransform.Find("XMover/HudRect/LeftContainer");
-        _mainHudRightContainer = __instance.warpTransform.Find("XMover/HudRect/RightContainer");
+        _trackInfoContainer = domeHud.wheelWarpTransform.Find("HudWheelRect/Backing Container");
+        _timeBarContainer = domeHud.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
+        _mainHudLeftContainer = domeHud.warpTransform.Find("XMover/HudRect/LeftContainer");
+        _mainHudRightContainer = domeHud.warpTransform.Find("XMover/HudRect/RightContainer");
         
-        _scoreText = __instance.number.gameObject.transform.parent.parent.Find("ScoreText");
+        _scoreText = domeHud.number.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();
         ScoreTextMeshRenderer = _scoreText.GetComponent<MeshRenderer>();
         _scoreText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
         
-        _healthText = __instance.healthBar.transform.parent.Find("HealthText");
+        _healthText = domeHud.healthBar.transform.parent.Find("HealthText");
         _healthTextTMP = _healthText.GetComponent<CustomTextMeshPro>();
         HealthTextMeshRenderer = _healthText.GetComponent<MeshRenderer>();
         _healthText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
         
-        _comboText = __instance.streak.transform.parent.parent.Find("StreakText");
+        _comboText = domeHud.streak.transform.parent.parent.Find("StreakText");
         ComboTextMeshRenderer = _comboText.GetComponent<MeshRenderer>();
         _comboText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
-
-        _infoText = __instance.trackTitleText.transform;
+        
+        _infoText = domeHud.trackTitleText.transform;
         InfoTextMeshRenderer = _infoText.GetComponent<MeshRenderer>();
         _infoText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
-
-        Transform timeContainer = __instance.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
+        
+        Transform timeContainer = domeHud.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
         TimeElements.Add(timeContainer.Find("TrackTimePassedText"));
         TimeElements.Add(timeContainer.Find("TrackLengthText"));
         Transform timeBarContainer = timeContainer.Find("Time Bar Fill");
@@ -126,9 +92,9 @@ internal static class DomeHudPatches
             }
         }
         
-        FcElements.Add(__instance.fcTexts[0].transform.parent.Find("FcStar"));
-        FcElements.Add(__instance.fcTexts[0].transform.parent.Find("FcStarOutine")); // yep, outine
-        foreach (TMP_Text fcText in __instance.fcTexts)
+        FcElements.Add(domeHud.fcTexts[0].transform.parent.Find("FcStar"));
+        FcElements.Add(domeHud.fcTexts[0].transform.parent.Find("FcStarOutine")); // yep, outine
+        foreach (TMP_Text fcText in domeHud.fcTexts)
         {
             FcElements.Add(fcText.transform);
         }
@@ -137,10 +103,10 @@ internal static class DomeHudPatches
             FcElementMeshRenderers.Add(transform.GetComponent<MeshRenderer>());
         }
         
-        MultiplierElements.Add(__instance.multiplierBar.transform);
-        for(int i = 0; i < __instance.multiplier.transform.parent.childCount; i++)
+        MultiplierElements.Add(domeHud.multiplierBar.transform);
+        for(int i = 0; i < domeHud.multiplier.transform.parent.childCount; i++)
         {
-            MultiplierElements.Add(__instance.multiplier.transform.parent.GetChild(i));
+            MultiplierElements.Add(domeHud.multiplier.transform.parent.GetChild(i));
         }
         
         foreach (Transform transform in MultiplierElements)
@@ -181,15 +147,30 @@ internal static class DomeHudPatches
         // whatever palette this is (how it determines it is. beyond me), it's only white. i think. so that works out.
         _palette.GlobalPaletteIndex = 1;
     }
+    
+    internal async Task ResetTranslatedTexts()
+    {
+        if (_scoreText.TryGetComponent(out TranslatedTextMeshPro scoreTranslatedTextMeshPro))
+        {
+            scoreTranslatedTextMeshPro.Translation = "";
+            await Awaitable.EndOfFrameAsync();
+            scoreTranslatedTextMeshPro.Translation = "Score";
+        }
 
-    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Update))]
-    [HarmonyPostfix]
-    // ReSharper disable once InconsistentNaming
-    public static void UpdatePatch(DomeHud __instance)
+        // ReSharper disable once InvertIf
+        if (_healthText.TryGetComponent(out TranslatedTextMeshPro healthTranslatedTextMeshPro))
+        {
+            healthTranslatedTextMeshPro.Translation = "";
+            await Awaitable.EndOfFrameAsync();
+            healthTranslatedTextMeshPro.Translation = "Health";
+        }
+    }
+
+    internal void Update()
     {
         if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value)
         {
-            ScoreState scoreState = __instance.PlayState.scoreState;
+            ScoreState scoreState = _domeHud.PlayState.scoreState;
             float accuracy = (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
 
             string accString = $"{(float.IsNaN(accuracy) ? 100 : accuracy):0.00}%";
@@ -202,10 +183,10 @@ internal static class DomeHudPatches
         
         if (_healthTextTMP != null && Plugin.EnablePreciseHealth.Value)
         {
-            _healthTextTMP.text = __instance.PlayState.health.ToString().PadLeft(3, '0');
+            _healthTextTMP.text = _domeHud.PlayState.health.ToString().PadLeft(3, '0');
         }
 
-        FullComboState fcState = __instance._playState?.scoreState?.fullComboState ?? FullComboState.None;
+        FullComboState fcState = _domeHud._playState?.scoreState?.fullComboState ?? FullComboState.None;
         foreach (MeshRenderer meshRenderer in FcElementMeshRenderers)
         {
             meshRenderer.material.SetColor(FaceColor,
@@ -214,13 +195,10 @@ internal static class DomeHudPatches
                     : Plugin.FcColor.Value.ToColor());
         }
     }
-    
-    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.MultiplierBarResultCallback))]
-    [HarmonyPostfix]
-    // ReSharper disable once InconsistentNaming
-    public static void DomeHud_MultiplierBarResultCallbackPatch(DomeHud __instance)
+
+    internal void MultiplierBarResultCallback()
     {
-        ScoreState? scoreState = __instance.PlayState?.scoreState;
+        ScoreState? scoreState = _domeHud.PlayState?.scoreState;
         if (scoreState == null)
         {
             return;
@@ -240,22 +218,19 @@ internal static class DomeHudPatches
         }
     }
 
-    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateTranslatedElements))]
-    [HarmonyPrefix]
-    // ReSharper disable once InconsistentNaming
-    public static bool UpdateTranslatedElementsPatch(DomeHud __instance)
+    internal bool UpdateTranslatedElements()
     {
-        if (__instance._playState == null)
+        if (_domeHud._playState == null)
         {
             return true;
         }
-        if (__instance._playState.IsLocalMultiplayer)
+        if (_domeHud._playState.IsLocalMultiplayer)
         {
             return true;
         }
         
-        PlayableTrackData? trackData = __instance._playState.trackData;
-        TrackInfoMetadata? trackInfoMetadata = trackData?.Setup.TrackDataSegments[__instance._currentTrackSectionIndex.GetValueOrDefault()].GetTrackInfoMetadata();
+        PlayableTrackData? trackData = _domeHud._playState.trackData;
+        TrackInfoMetadata? trackInfoMetadata = trackData?.Setup.TrackDataSegments[_domeHud._currentTrackSectionIndex.GetValueOrDefault()].GetTrackInfoMetadata();
         if (trackData == null || trackInfoMetadata == null)
         {
             return true;
@@ -279,9 +254,101 @@ internal static class DomeHudPatches
             formattedText = formattedText.Replace(tag.Key, tag.Value);
         }
 
-        __instance.trackTitleText.SetText(formattedText);
+        _domeHud.trackTitleText.SetText(formattedText);
         
         return false;
+    }
+
+    internal void UpdateOffsets()
+    {
+        if (_trackInfoContainer == null ||
+            _timeBarContainer == null ||
+            _mainHudLeftContainer == null ||
+            _mainHudRightContainer == null)
+        {
+            return;
+        }
+        
+        int hudTrackInfoSetting = XROverridablePlayerSettings<HUDPlayerSettings>.Instance.HudTrackInfo.Value;
+        
+        // game's doing something finicky with alpha (and _trackInfoContainer's enabled state),
+        // but if i set the text on the element, it overrides whatever the game's doing
+        // so. this. i hate it.
+        _trackInfoContainer.localPosition =
+            _trackInfoContainer.localPosition with { y = (hudTrackInfoSetting == 2 ? Plugin.TrackInfoVerticalOffset.Value * 2 : -99999) };
+
+        RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
+        timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
+        timeBarTransform.anchorMax = timeBarTransform.anchorMax with { x = 0.5f + (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
+        
+        RectTransform leftBarTransform = _mainHudLeftContainer.GetComponent<RectTransform>();
+        leftBarTransform.offsetMin = leftBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+        leftBarTransform.offsetMax = leftBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+        RectTransform rightBarTransform = _mainHudRightContainer.GetComponent<RectTransform>();
+        rightBarTransform.offsetMin = rightBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+        rightBarTransform.offsetMax = rightBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+    }
+}
+
+[HarmonyPatch]
+internal static class DomeHudPatches
+{
+    internal static readonly Dictionary<DomeHud, DomeHudContainer> DomeHudContainers = new();
+    
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    public static void DomeHud_InitPatch(DomeHud __instance)
+    {
+        if (DomeHudContainers.ContainsKey(__instance))
+        {
+            // already initialized for this DomeHud instance
+            return;
+        }
+        
+        DomeHudContainers.Add(__instance, new DomeHudContainer(__instance));
+    }
+    
+    [HarmonyPatch(typeof(PlayingTrackGameState), nameof(PlayingTrackGameState.OnBecameActive))]
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    public static void OnBecameActive_Patch()
+    {
+        _ = Plugin.UpdateColors();
+        _ = Plugin.UpdateHudElementsVisibility();
+    }
+    
+    internal static async Task ResetTranslatedTexts()
+    {
+        foreach (KeyValuePair<DomeHud, DomeHudContainer> container in DomeHudContainers)
+        {
+            await container.Value.ResetTranslatedTexts();
+        }
+    }
+
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Update))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    public static void UpdatePatch(DomeHud __instance)
+    {
+        DomeHudContainers[__instance].Update();
+    }
+    
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.MultiplierBarResultCallback))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    public static void DomeHud_MultiplierBarResultCallbackPatch(DomeHud __instance)
+    {
+        DomeHudContainers[__instance].MultiplierBarResultCallback();
+    }
+
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateTranslatedElements))]
+    [HarmonyPrefix]
+    // ReSharper disable once InconsistentNaming
+    public static bool UpdateTranslatedElementsPatch(DomeHud __instance)
+    {
+        return DomeHudContainers[__instance].UpdateTranslatedElements();
     }
     
     [HarmonyPatch(typeof(DomeHudTrackTimeBar), nameof(DomeHudTrackTimeBar.LateUpdate))]
@@ -362,32 +429,10 @@ internal static class DomeHudPatches
 
     internal static void UpdateOffsets()
     {
-        if (_trackInfoContainer == null ||
-            _timeBarContainer == null ||
-            _mainHudLeftContainer == null ||
-            _mainHudRightContainer == null)
+        foreach (KeyValuePair<DomeHud, DomeHudContainer> container in DomeHudContainers)
         {
-            return;
+            container.Value.UpdateOffsets();
         }
-        
-        int hudTrackInfoSetting = XROverridablePlayerSettings<HUDPlayerSettings>.Instance.HudTrackInfo.Value;
-        
-        // game's doing something finicky with alpha (and _trackInfoContainer's enabled state),
-        // but if i set the text on the element, it overrides whatever the game's doing
-        // so. this. i hate it.
-        _trackInfoContainer.localPosition =
-            _trackInfoContainer.localPosition with { y = (hudTrackInfoSetting == 2 ? Plugin.TrackInfoVerticalOffset.Value * 2 : -99999) };
-
-        RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
-        timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
-        timeBarTransform.anchorMax = timeBarTransform.anchorMax with { x = 0.5f + (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
-        
-        RectTransform leftBarTransform = _mainHudLeftContainer.GetComponent<RectTransform>();
-        leftBarTransform.offsetMin = leftBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
-        leftBarTransform.offsetMax = leftBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
-        RectTransform rightBarTransform = _mainHudRightContainer.GetComponent<RectTransform>();
-        rightBarTransform.offsetMin = rightBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
-        rightBarTransform.offsetMax = rightBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
     }
 
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateLayout))]
@@ -395,7 +440,7 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     private static void DomeHud_UpdateLayoutPatch(DomeHud __instance)
     {
-        UpdateOffsets();
+        DomeHudContainers[__instance].UpdateOffsets();
     } 
     
     [HarmonyPatch(typeof(ScoreState), nameof(ScoreState.AddOverbeat))]
