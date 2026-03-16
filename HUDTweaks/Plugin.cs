@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -149,53 +150,46 @@ public partial class Plugin : BaseUnityPlugin
         ];
     }
     
-    internal static async Task UpdateColors()
+    internal static void UpdateColors()
     {
-        PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
+        Color healthColor = HealthColor.Value.ToColor();
+        Color textColor = TextColor.Value.ToColor();
         
-        while (DomeHudPatches.ScoreTextMeshRenderer == null ||
-               DomeHudPatches.ComboTextMeshRenderer == null ||
-               DomeHudPatches.InfoTextMeshRenderer == null ||
-               DomeHudPatches.HealthTextMeshRenderer == null)
+        foreach (KeyValuePair<DomeHud, DomeHudContainer> hudContainer in DomeHudPatches.DomeHudContainers)
         {
-            await Awaitable.EndOfFrameAsync(); // akdfhskdfhsdfs
-        }
-
-        foreach (PlayStateContainer playStateContainer in playStateContainers)
-        {
-            playStateContainer.Hud.healthBar._spriteMesh.Palette.Colors[1] = NumberColor.Value.ToColor();
+            DomeHud hud = hudContainer.Key;
+            DomeHudContainer container = hudContainer.Value;
             
-            Color healthColor = HealthColor.Value.ToColor();
-            DomeHudPatches.HealthTextMeshRenderer.material.SetColor(FaceColor, healthColor);
-            playStateContainer.Hud.healthBar.transform.GetComponent<MeshRenderer>().material.SetColor(FaceColor, healthColor);
+            hud.healthBar._spriteMesh.Palette.Colors[1] = NumberColor.Value.ToColor();
+            hud.healthBar.transform.GetComponent<MeshRenderer>().material.SetColor(FaceColor, healthColor);
+            container.HealthTextMeshRenderer.material.SetColor(FaceColor, healthColor);
             
-            foreach (TMP_Text fcText in playStateContainer.Hud.fcTexts)
+            foreach (TMP_Text fcText in hud.fcTexts)
             {
                 // we can't just define our own palettes with color here, as the game's not interpreting palette colors directly
                 // so we've *also* got to do this the hard way. sigh
                 fcText.transform.GetComponent<HdrMeshEffect>().Palette = WhitePalette;
             }
-            playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStar").GetComponent<SpriteMesh>().Palette = WhitePalette;
-            playStateContainer.Hud.fcTexts[0].transform.parent.Find("FcStarOutine").GetComponent<SpriteMesh>().Palette = WhitePalette; // yep, outine
-        }
+            hud.fcTexts[0].transform.parent.Find("FcStar").GetComponent<SpriteMesh>().Palette = WhitePalette;
+            hud.fcTexts[0].transform.parent.Find("FcStarOutine").GetComponent<SpriteMesh>().Palette = WhitePalette; // yep, outine
+            
+            container.ScoreTextMeshRenderer.material.SetColor(FaceColor, textColor);
+            container.ComboTextMeshRenderer.material.SetColor(FaceColor, textColor);
+            container.InfoTextMeshRenderer.material.SetColor(FaceColor, textColor);
+            foreach (MeshRenderer meshRenderer in container.TimeElementMeshRenderers)
+            {
+                meshRenderer.material.SetColor(FaceColor, TimeColor.Value.ToColor());
+            }
         
-        Color textColor = TextColor.Value.ToColor();
-        DomeHudPatches.ScoreTextMeshRenderer.material.SetColor(FaceColor, textColor);
-        DomeHudPatches.ComboTextMeshRenderer.material.SetColor(FaceColor, textColor);
-        DomeHudPatches.InfoTextMeshRenderer.material.SetColor(FaceColor, textColor);
-        foreach (MeshRenderer meshRenderer in DomeHudPatches.TimeElementMeshRenderers)
-        {
-            meshRenderer.material.SetColor(FaceColor, TimeColor.Value.ToColor());
-        }
-        
-        foreach (MeshRenderer meshRenderer in DomeHudPatches.FcElementMeshRenderers)
-        {
-            meshRenderer.material.SetColor(FaceColor, PfcColor.Value.ToColor());
-        }
+            foreach (MeshRenderer meshRenderer in container.FcElementMeshRenderers)
+            {
+                meshRenderer.material.SetColor(FaceColor, PfcColor.Value.ToColor());
+            }
 
-        foreach (MeshRenderer meshRenderer in DomeHudPatches.HurtBackingElementMeshRenderers)
-        {
-            meshRenderer.material.SetColor(FaceColor, HurtColor.Value.ToColor());
+            foreach (MeshRenderer meshRenderer in container.HurtBackingElementMeshRenderers)
+            {
+                meshRenderer.material.SetColor(FaceColor, HurtColor.Value.ToColor());
+            }
         }
 
         ForceMultiplierPalette();
@@ -204,11 +198,17 @@ public partial class Plugin : BaseUnityPlugin
     internal static async Task UpdateHudElementsVisibility()
     {
         PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
-        
+
         foreach (PlayStateContainer playStateContainer in playStateContainers)
         {
-            DomeHud domeHud = playStateContainer.Hud;
+            playStateContainer._trackSkinVisuals?.transform.Find("TrackStrip")?.gameObject
+                .SetActive(EnableTrackStrips.Value);
+            playStateContainer.WheelVisuals?.leftGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
+            playStateContainer.WheelVisuals?.rightGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
+        }
 
+        foreach (DomeHud domeHud in DomeHudPatches.DomeHudContainers.Select(hudContainer => hudContainer.Key))
+        {
             // multiplier text
             domeHud.multiplier.transform.parent.gameObject.SetActive(EnableMultiplierText.Value);
 
@@ -217,11 +217,6 @@ public partial class Plugin : BaseUnityPlugin
 
             // score text
             domeHud.number.transform.parent.parent.gameObject.SetActive(EnableScore.Value);
-
-            playStateContainer._trackSkinVisuals?.transform.Find("TrackStrip")?.gameObject
-                .SetActive(EnableTrackStrips.Value);
-            playStateContainer.WheelVisuals?.leftGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
-            playStateContainer.WheelVisuals?.rightGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
 
             for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
             {

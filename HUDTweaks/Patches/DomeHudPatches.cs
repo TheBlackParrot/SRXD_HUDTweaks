@@ -294,19 +294,27 @@ internal class DomeHudContainer
 internal static class DomeHudPatches
 {
     internal static readonly Dictionary<DomeHud, DomeHudContainer> DomeHudContainers = new();
+
+    private static void AddToContainerList(DomeHud domeHud)
+    {
+#if DEBUG
+        Plugin.Log.LogInfo("Wanted to add to the container list");
+#endif
+        if (DomeHudContainers.ContainsKey(domeHud))
+        {
+            // already initialized for this DomeHud instance
+            return;
+        }
+        
+        DomeHudContainers.Add(domeHud, new DomeHudContainer(domeHud));
+    }
     
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.Init))]
     [HarmonyPostfix]
     // ReSharper disable once InconsistentNaming
     public static void DomeHud_InitPatch(DomeHud __instance)
     {
-        if (DomeHudContainers.ContainsKey(__instance))
-        {
-            // already initialized for this DomeHud instance
-            return;
-        }
-        
-        DomeHudContainers.Add(__instance, new DomeHudContainer(__instance));
+        AddToContainerList(__instance);
     }
     
     [HarmonyPatch(typeof(PlayingTrackGameState), nameof(PlayingTrackGameState.OnBecameActive))]
@@ -315,7 +323,7 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void OnBecameActive_Patch()
     {
-        _ = Plugin.UpdateColors();
+        Plugin.UpdateColors();
         _ = Plugin.UpdateHudElementsVisibility();
     }
     
@@ -340,6 +348,7 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void DomeHud_MultiplierBarResultCallbackPatch(DomeHud __instance)
     {
+        AddToContainerList(__instance);
         DomeHudContainers[__instance].MultiplierBarResultCallback();
     }
 
@@ -348,6 +357,7 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static bool UpdateTranslatedElementsPatch(DomeHud __instance)
     {
+        AddToContainerList(__instance);
         return DomeHudContainers[__instance].UpdateTranslatedElements();
     }
     
@@ -440,6 +450,7 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     private static void DomeHud_UpdateLayoutPatch(DomeHud __instance)
     {
+        AddToContainerList(__instance);
         DomeHudContainers[__instance].UpdateOffsets();
     } 
     
