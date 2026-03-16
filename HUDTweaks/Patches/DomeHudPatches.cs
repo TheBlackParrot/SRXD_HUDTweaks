@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -323,8 +324,15 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void OnBecameActive_Patch()
     {
-        Plugin.UpdateColors();
-        _ = Plugin.UpdateHudElementsVisibility();
+        try
+        {
+            _ = Plugin.UpdateColors();
+            _ = Plugin.UpdateHudElementsVisibility();
+        }
+        catch (Exception e)
+        {
+            Plugin.Log.LogError(e);
+        }
     }
     
     internal static async Task ResetTranslatedTexts()
@@ -340,7 +348,14 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void UpdatePatch(DomeHud __instance)
     {
-        DomeHudContainers[__instance].Update();
+        try
+        {
+            DomeHudContainers[__instance].Update();
+        }
+        catch (KeyNotFoundException)
+        {
+            AddToContainerList(__instance);
+        }
     }
     
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.MultiplierBarResultCallback))]
@@ -348,17 +363,46 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void DomeHud_MultiplierBarResultCallbackPatch(DomeHud __instance)
     {
-        AddToContainerList(__instance);
-        DomeHudContainers[__instance].MultiplierBarResultCallback();
+        try
+        {
+            DomeHudContainers[__instance].MultiplierBarResultCallback();
+        }
+        catch (KeyNotFoundException)
+        {
+            AddToContainerList(__instance);
+        }
     }
+    
+    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateLayout))]
+    [HarmonyPostfix]
+    // ReSharper disable once InconsistentNaming
+    private static void DomeHud_UpdateLayoutPatch(DomeHud __instance)
+    {
+        try
+        {
+            DomeHudContainers[__instance].UpdateOffsets();
+        }
+        catch (KeyNotFoundException)
+        {
+            AddToContainerList(__instance);
+        }
+    } 
 
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateTranslatedElements))]
     [HarmonyPrefix]
     // ReSharper disable once InconsistentNaming
     public static bool UpdateTranslatedElementsPatch(DomeHud __instance)
     {
-        AddToContainerList(__instance);
-        return DomeHudContainers[__instance].UpdateTranslatedElements();
+        try
+        {
+            return DomeHudContainers[__instance].UpdateTranslatedElements();
+        }
+        catch (KeyNotFoundException)
+        {
+            AddToContainerList(__instance);
+        }
+
+        return true;
     }
     
     [HarmonyPatch(typeof(DomeHudTrackTimeBar), nameof(DomeHudTrackTimeBar.LateUpdate))]
@@ -444,15 +488,6 @@ internal static class DomeHudPatches
             container.Value.UpdateOffsets();
         }
     }
-
-    [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.UpdateLayout))]
-    [HarmonyPostfix]
-    // ReSharper disable once InconsistentNaming
-    private static void DomeHud_UpdateLayoutPatch(DomeHud __instance)
-    {
-        AddToContainerList(__instance);
-        DomeHudContainers[__instance].UpdateOffsets();
-    } 
     
     [HarmonyPatch(typeof(ScoreState), nameof(ScoreState.AddOverbeat))]
     [HarmonyPostfix]

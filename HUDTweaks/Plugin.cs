@@ -150,7 +150,7 @@ public partial class Plugin : BaseUnityPlugin
         ];
     }
     
-    internal static void UpdateColors()
+    internal static async Task UpdateColors()
     {
         Color healthColor = HealthColor.Value.ToColor();
         Color textColor = TextColor.Value.ToColor();
@@ -159,6 +159,11 @@ public partial class Plugin : BaseUnityPlugin
         {
             DomeHud hud = hudContainer.Key;
             DomeHudContainer container = hudContainer.Value;
+
+            while (hud.healthBar == null || hud.healthBar?._spriteMesh == null)
+            {
+                await Awaitable.EndOfFrameAsync();
+            }
             
             hud.healthBar._spriteMesh.Palette.Colors[1] = NumberColor.Value.ToColor();
             hud.healthBar.transform.GetComponent<MeshRenderer>().material.SetColor(FaceColor, healthColor);
