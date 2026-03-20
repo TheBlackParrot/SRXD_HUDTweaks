@@ -150,7 +150,7 @@ public partial class Plugin : BaseUnityPlugin
         ];
     }
     
-    internal static async Task UpdateColors()
+    private static async Task UpdateColors()
     {
         Color healthColor = HealthColor.Value.ToColor();
         Color textColor = TextColor.Value.ToColor();
@@ -200,7 +200,7 @@ public partial class Plugin : BaseUnityPlugin
         ForceMultiplierPalette();
     }
 
-    internal static async Task UpdateHudElementsVisibility()
+    private static async Task UpdateHudElementsVisibility()
     {
         PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
 
@@ -265,7 +265,7 @@ public partial class Plugin : BaseUnityPlugin
             playStateContainer.Hud.UpdateTranslatedElements();
         }
         DomeHudPatches.UpdateOffsets();
-        _ = DomeHudPatches.ResetTranslatedTexts();
+        await DomeHudPatches.ResetTranslatedTexts();
         await UpdateColors();
     }
 }

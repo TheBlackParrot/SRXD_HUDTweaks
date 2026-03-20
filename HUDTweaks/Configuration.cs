@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using BepInEx.Configuration;
 using HUDTweaks.Classes;
-using HUDTweaks.Patches;
 using SpinCore.Translation;
 using SpinCore.UI;
 using UnityEngine;
