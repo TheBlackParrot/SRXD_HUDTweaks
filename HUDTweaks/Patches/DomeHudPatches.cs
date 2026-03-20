@@ -365,8 +365,7 @@ internal static class DomeHudPatches
     {
         try
         {
-            _ = Plugin.UpdateColors();
-            _ = Plugin.UpdateHudElementsVisibility();
+            _ = Plugin.RefreshEverythingGuh();
         }
         catch (Exception e)
         {

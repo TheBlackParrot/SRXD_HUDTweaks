@@ -255,7 +255,7 @@ public partial class Plugin : BaseUnityPlugin
         }
     }
 
-    private static async Task RefreshEverythingGuh()
+    internal static async Task RefreshEverythingGuh()
     {
         await UpdateHudElementsVisibility();
         await Awaitable.MainThreadAsync();
