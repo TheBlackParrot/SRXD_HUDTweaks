@@ -11,6 +11,26 @@ namespace HUDTweaks.Patches;
 
 internal class DomeHudContainer
 {
+    // where in the flippity frick do i find these >:(
+    private enum DlcAbbreviations
+    {
+        // ReSharper disable InconsistentNaming
+        BG = 0, // Base game
+        MC = 1000, // Monstercat
+        CH = 2000, // Chillhop
+        SP = 3000, // Supporter Pack
+        IN = 4000 // Indie Pack
+        // ReSharper restore InconsistentNaming
+    }
+    private readonly Dictionary<DlcAbbreviations, string> _dlcNames = new()
+    {
+        { DlcAbbreviations.BG, "Base Game" },
+        { DlcAbbreviations.MC, "Monstercat DLC" },
+        { DlcAbbreviations.CH, "Chillhop DLC" },
+        { DlcAbbreviations.SP, "Supporter Pack DLC" },
+        { DlcAbbreviations.IN, "Indie Pack DLC" }
+    };
+    
     private readonly DomeHud _domeHud;
     
     private readonly Transform _scoreText;
@@ -240,11 +260,23 @@ internal class DomeHudContainer
         }
 
         int trackDuration = trackData.GameplayEndTick.ToSecondsInt().Max(0) + 1;
+
+        bool isCustom = trackInfoMetadata.isCustom || trackData.Difficulty == TrackData.DifficultyType.RemiXD && !trackInfoMetadata.isCustom;
+
+        string creditValue = isCustom
+            ? trackInfoMetadata.charter
+            : _dlcNames[(DlcAbbreviations)trackInfoMetadata.trackOrder - (trackInfoMetadata.trackOrder % 1000)];
+
+        string creditString = isCustom
+            ? Plugin.CustomCreditText.Value.Replace("%charter%", creditValue)
+            : Plugin.NonCustomCreditText.Value.Replace("%charter%", creditValue);
+        
         Dictionary<string, string> tags = new()
         {
             { "%title%", trackInfoMetadata.title },
             { "%artist%", trackInfoMetadata.artistName },
-            { "%charter%", trackInfoMetadata.charter },
+            { "%credit%", creditString },
+            { "%charter%", creditString },
             { "%difficulty%", trackData.Difficulty.ToString() },
             { "%rating%", trackData.DifficultyRating.ToString() },
             { "%duration%", $"{(trackDuration / 60d).FloorToInt()}:{(trackDuration % 60).ToString().PadLeft(2, '0')}" }

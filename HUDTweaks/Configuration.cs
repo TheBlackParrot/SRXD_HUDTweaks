@@ -48,6 +48,8 @@ public partial class Plugin
     internal static ConfigEntry<bool> EnableTrackStrips = null!;
     internal static ConfigEntry<bool> EnableWheelGrips = null!;
 
+    internal static ConfigEntry<string> NonCustomCreditText = null!;
+    internal static ConfigEntry<string> CustomCreditText = null!;
     internal static ConfigEntry<string> TrackInfoText = null!;
     
     internal static ConfigEntry<bool> ShowTimeInBeats = null!;
@@ -141,6 +143,12 @@ public partial class Plugin
             "Color for FC elements");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(FcColor)}", "FC color");
         
+        NonCustomCreditText = Config.Bind("Info", nameof(NonCustomCreditText), "from the %charter%",
+            "Credit string for non-custom charts, %charter% turns into the pack the chart is from");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(NonCustomCreditText)}", "Non-custom credit string");
+        CustomCreditText = Config.Bind("Info", nameof(CustomCreditText), "by %charter%",
+            "Credit string for custom charts, %charter% turns into the credit given for said chart");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(CustomCreditText)}", "Custom credit string");
         TrackInfoText = Config.Bind("Info", nameof(TrackInfoText), "%title% - %artist%",
             "Format string for the track information");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", "Track Information String");
@@ -165,7 +173,7 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
         
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Artist", "Who made the current track");
-        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Charter", "Who charted the chart being played");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Charter", "Who charted the chart being played, or the pack the chart is from");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Difficulty", "The difficulty name of the chart being played");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Duration", "How long the current track is (MM:SS)");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TagDescription_Rating", "The numeric rating of the chart being played");
@@ -877,6 +885,64 @@ public partial class Plugin
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "TrackInfoHeader", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", false);
+        
+        #region NonCustomCreditText
+        CustomGroup nonCustomCreditTextGroup = UIHelper.CreateGroup(modGroup, "NonCustomCreditTextGroup");
+        nonCustomCreditTextGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(nonCustomCreditTextGroup, "NonCustomCreditTextLabel", $"{TRANSLATION_PREFIX}{nameof(NonCustomCreditText)}");
+        
+        CustomInputField nonCustomCreditTextInput = UIHelper.CreateInputField(nonCustomCreditTextGroup, "NonCustomCreditTextInput", (_, value) =>
+        {
+            NonCustomCreditText.Value = value;
+            
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await Awaitable.MainThreadAsync();
+                    PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
+                    foreach (PlayStateContainer playStateContainer in playStateContainers)
+                    {
+                        playStateContainer.Hud.UpdateTranslatedElements();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError(ex);
+                }
+            });
+        });
+        nonCustomCreditTextInput.InputField.SetText(NonCustomCreditText.Value);
+        #endregion
+        
+        #region CustomCreditText
+        CustomGroup customCreditTextGroup = UIHelper.CreateGroup(modGroup, "CustomCreditTextGroup");
+        customCreditTextGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(customCreditTextGroup, "CustomCreditTextLabel", $"{TRANSLATION_PREFIX}{nameof(CustomCreditText)}");
+        
+        CustomInputField customCreditTextInput = UIHelper.CreateInputField(customCreditTextGroup, "CustomCreditTextInput", (_, value) =>
+        {
+            CustomCreditText.Value = value;
+            
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await Awaitable.MainThreadAsync();
+                    PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
+                    foreach (PlayStateContainer playStateContainer in playStateContainers)
+                    {
+                        playStateContainer.Hud.UpdateTranslatedElements();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError(ex);
+                }
+            });
+        });
+        customCreditTextInput.InputField.SetText(CustomCreditText.Value);
+        #endregion
         
         #region TrackInfoText
         CustomGroup trackInfoTextGroup = UIHelper.CreateGroup(modGroup, "TrackInfoTextGroup");
