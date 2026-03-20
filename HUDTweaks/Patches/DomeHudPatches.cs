@@ -209,13 +209,18 @@ internal class DomeHudContainer
             _healthTextTMP.text = _domeHud.PlayState.health.ToString().PadLeft(3, '0');
         }
 
+        // here
         FullComboState fcState = _domeHud._playState?.scoreState?.fullComboState ?? FullComboState.None;
+        Color fcColor = Plugin.FcColor.Value.ToColor();
+        Color pfcColor = Plugin.PfcColor.Value.ToColor();
         foreach (MeshRenderer meshRenderer in FcElementMeshRenderers)
         {
             meshRenderer.material.SetColor(_faceColor,
-                fcState == FullComboState.PerfectPlus
-                    ? Plugin.PfcColor.Value.ToColor()
-                    : Plugin.FcColor.Value.ToColor());
+                fcState >= FullComboState.Perfect
+                    ? _domeHud.PlayState.PlayerSettings.NoPerfectPlus
+                        ? fcColor
+                        : pfcColor
+                    : fcColor);
         }
     }
 
