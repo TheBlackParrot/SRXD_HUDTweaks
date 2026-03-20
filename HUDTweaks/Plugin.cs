@@ -254,4 +254,18 @@ public partial class Plugin : BaseUnityPlugin
             }
         }
     }
+
+    private static async Task RefreshEverythingGuh()
+    {
+        await UpdateHudElementsVisibility();
+        await Awaitable.MainThreadAsync();
+        PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
+        foreach (PlayStateContainer playStateContainer in playStateContainers)
+        {
+            playStateContainer.Hud.UpdateTranslatedElements();
+        }
+        DomeHudPatches.UpdateOffsets();
+        _ = DomeHudPatches.ResetTranslatedTexts();
+        await UpdateColors();
+    }
 }

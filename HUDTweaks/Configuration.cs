@@ -228,7 +228,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableMultiplierBar)}", EnableMultiplierBar.Value, value =>
             {
                 EnableMultiplierBar.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -239,7 +239,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableMultiplierText)}", EnableMultiplierText.Value, value =>
             {
                 EnableMultiplierText.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -250,7 +250,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableCombo)}", EnableCombo.Value, value =>
             {
                 EnableCombo.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -261,7 +261,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableScore)}", EnableScore.Value, value =>
             {
                 EnableScore.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -272,7 +272,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableHealthBar)}", EnableHealthBar.Value, value =>
             {
                 EnableHealthBar.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -283,7 +283,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableHurtFlashing)}", EnableHurtFlashing.Value, value =>
             {
                 EnableHurtFlashing.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -294,7 +294,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableTrackStrips)}", EnableTrackStrips.Value, value =>
             {
                 EnableTrackStrips.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -305,7 +305,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableWheelGrips)}", EnableWheelGrips.Value, value =>
             {
                 EnableWheelGrips.Value = value;
-                _ = UpdateHudElementsVisibility();
+                _ = RefreshEverythingGuh();
             });
         #endregion
 
@@ -328,7 +328,7 @@ public partial class Plugin
             MainHudVerticalOffset.Value, (value) =>
             {
                 MainHudVerticalOffset.Value = value;
-                DomeHudPatches.UpdateOffsets();
+                _ = RefreshEverythingGuh();
             },
             () => new IntRange(-10, 11),
             v => v.ToString());
@@ -340,7 +340,7 @@ public partial class Plugin
             TrackInfoVerticalOffset.Value, (value) =>
             {
                 TrackInfoVerticalOffset.Value = value;
-                DomeHudPatches.UpdateOffsets();
+                _ = RefreshEverythingGuh();
             },
             () => new IntRange(-10, 11),
             v => v.ToString());
@@ -352,7 +352,7 @@ public partial class Plugin
             TimeBarWidth.Value, (value) =>
             {
                 TimeBarWidth.Value = value;
-                DomeHudPatches.UpdateOffsets();
+                _ = RefreshEverythingGuh();
             },
             () => new IntRange(-10, 11),
             v => v.ToString());
@@ -373,7 +373,7 @@ public partial class Plugin
             }
 
             NumberColor.Value = NumberColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         numberColorInputR.InputField.SetText(NumberColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -385,7 +385,7 @@ public partial class Plugin
             }
 
             NumberColor.Value = NumberColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         numberColorInputG.InputField.SetText(NumberColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -397,7 +397,7 @@ public partial class Plugin
             }
 
             NumberColor.Value = NumberColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         numberColorInputB.InputField.SetText(NumberColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -415,7 +415,7 @@ public partial class Plugin
             }
 
             TextColor.Value = TextColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         textColorInputR.InputField.SetText(TextColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -427,7 +427,7 @@ public partial class Plugin
             }
 
             TextColor.Value = TextColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         textColorInputG.InputField.SetText(TextColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -439,7 +439,7 @@ public partial class Plugin
             }
 
             TextColor.Value = TextColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         textColorInputB.InputField.SetText(TextColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -457,7 +457,7 @@ public partial class Plugin
             }
 
             TimeColor.Value = TimeColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         timeColorInputR.InputField.SetText(TimeColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -469,7 +469,7 @@ public partial class Plugin
             }
 
             TimeColor.Value = TimeColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         timeColorInputG.InputField.SetText(TimeColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -481,7 +481,7 @@ public partial class Plugin
             }
 
             TimeColor.Value = TimeColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         timeColorInputB.InputField.SetText(TimeColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -499,7 +499,7 @@ public partial class Plugin
             }
 
             HealthColor.Value = HealthColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         healthColorInputR.InputField.SetText(HealthColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -511,7 +511,7 @@ public partial class Plugin
             }
 
             HealthColor.Value = HealthColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         healthColorInputG.InputField.SetText(HealthColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -523,7 +523,7 @@ public partial class Plugin
             }
 
             HealthColor.Value = HealthColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         healthColorInputB.InputField.SetText(HealthColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -541,7 +541,7 @@ public partial class Plugin
             }
 
             HurtColor.Value = HurtColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         hurtColorInputR.InputField.SetText(HurtColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -553,7 +553,7 @@ public partial class Plugin
             }
 
             HurtColor.Value = HurtColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         hurtColorInputG.InputField.SetText(HurtColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -565,7 +565,7 @@ public partial class Plugin
             }
 
             HurtColor.Value = HurtColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         hurtColorInputB.InputField.SetText(HurtColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -583,7 +583,7 @@ public partial class Plugin
             }
 
             PfcColor.Value = PfcColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         pfcColorInputR.InputField.SetText(PfcColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -595,7 +595,7 @@ public partial class Plugin
             }
 
             PfcColor.Value = PfcColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         pfcColorInputG.InputField.SetText(PfcColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -607,7 +607,7 @@ public partial class Plugin
             }
 
             PfcColor.Value = PfcColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         pfcColorInputB.InputField.SetText(PfcColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -625,7 +625,7 @@ public partial class Plugin
             }
 
             FcColor.Value = FcColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         fcColorInputR.InputField.SetText(FcColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -637,7 +637,7 @@ public partial class Plugin
             }
 
             FcColor.Value = FcColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         fcColorInputG.InputField.SetText(FcColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -649,7 +649,7 @@ public partial class Plugin
             }
 
             FcColor.Value = FcColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         fcColorInputB.InputField.SetText(FcColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -667,7 +667,7 @@ public partial class Plugin
             }
 
             Multiplier1XColor.Value = Multiplier1XColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier1XColorInputR.InputField.SetText(Multiplier1XColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -679,7 +679,7 @@ public partial class Plugin
             }
 
             Multiplier1XColor.Value = Multiplier1XColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier1XColorInputG.InputField.SetText(Multiplier1XColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -691,7 +691,7 @@ public partial class Plugin
             }
 
             Multiplier1XColor.Value = Multiplier1XColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier1XColorInputB.InputField.SetText(Multiplier1XColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -709,7 +709,7 @@ public partial class Plugin
             }
 
             Multiplier2XColor.Value = Multiplier2XColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier2XColorInputR.InputField.SetText(Multiplier2XColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -721,7 +721,7 @@ public partial class Plugin
             }
 
             Multiplier2XColor.Value = Multiplier2XColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier2XColorInputG.InputField.SetText(Multiplier2XColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -733,7 +733,7 @@ public partial class Plugin
             }
 
             Multiplier2XColor.Value = Multiplier2XColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier2XColorInputB.InputField.SetText(Multiplier2XColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -751,7 +751,7 @@ public partial class Plugin
             }
 
             Multiplier3XColor.Value = Multiplier3XColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier3XColorInputR.InputField.SetText(Multiplier3XColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -763,7 +763,7 @@ public partial class Plugin
             }
 
             Multiplier3XColor.Value = Multiplier3XColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier3XColorInputG.InputField.SetText(Multiplier3XColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -775,7 +775,7 @@ public partial class Plugin
             }
 
             Multiplier3XColor.Value = Multiplier3XColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier3XColorInputB.InputField.SetText(Multiplier3XColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -793,7 +793,7 @@ public partial class Plugin
             }
 
             Multiplier4XColor.Value = Multiplier4XColor.Value with { x = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier4XColorInputR.InputField.SetText(Multiplier4XColor.Value.x.ToString(CultureInfo.InvariantCulture));
         
@@ -805,7 +805,7 @@ public partial class Plugin
             }
 
             Multiplier4XColor.Value = Multiplier4XColor.Value with { y = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier4XColorInputG.InputField.SetText(Multiplier4XColor.Value.y.ToString(CultureInfo.InvariantCulture));
         
@@ -817,7 +817,7 @@ public partial class Plugin
             }
 
             Multiplier4XColor.Value = Multiplier4XColor.Value with { z = Math.Max(value, 0f) };
-            _ = UpdateColors();
+            _ = RefreshEverythingGuh();
         });
         multiplier4XColorInputB.InputField.SetText(Multiplier4XColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
@@ -831,11 +831,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableAccuracyDisplay)}", EnableAccuracyDisplay.Value, value =>
             {
                 EnableAccuracyDisplay.Value = value;
-                
-                if (!value)
-                {
-                    _ = DomeHudPatches.ResetTranslatedTexts();
-                }
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -856,11 +852,7 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnablePreciseHealth)}", EnablePreciseHealth.Value, value =>
             {
                 EnablePreciseHealth.Value = value;
-
-                if (!value)
-                {
-                    _ = DomeHudPatches.ResetTranslatedTexts();
-                }
+                _ = RefreshEverythingGuh();
             });
         #endregion
         
@@ -899,12 +891,7 @@ public partial class Plugin
             {
                 try
                 {
-                    await Awaitable.MainThreadAsync();
-                    PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
-                    foreach (PlayStateContainer playStateContainer in playStateContainers)
-                    {
-                        playStateContainer.Hud.UpdateTranslatedElements();
-                    }
+                    await RefreshEverythingGuh();
                 }
                 catch (Exception ex)
                 {
@@ -928,12 +915,7 @@ public partial class Plugin
             {
                 try
                 {
-                    await Awaitable.MainThreadAsync();
-                    PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
-                    foreach (PlayStateContainer playStateContainer in playStateContainers)
-                    {
-                        playStateContainer.Hud.UpdateTranslatedElements();
-                    }
+                    await RefreshEverythingGuh();
                 }
                 catch (Exception ex)
                 {
@@ -956,12 +938,7 @@ public partial class Plugin
             {
                 try
                 {
-                    await Awaitable.MainThreadAsync();
-                    PlayStateContainer[] playStateContainers = await GetPlayStateContainers();
-                    foreach (PlayStateContainer playStateContainer in playStateContainers)
-                    {
-                        playStateContainer.Hud.UpdateTranslatedElements();
-                    }
+                    await RefreshEverythingGuh();
                 }
                 catch (Exception ex)
                 {
