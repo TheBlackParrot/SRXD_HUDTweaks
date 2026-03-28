@@ -59,6 +59,7 @@ public partial class Plugin
     internal static ConfigEntry<string> TrackInfoText = null!;
     
     internal static ConfigEntry<TimeMeasurement> TimeMeasurementType = null!;
+    internal static ConfigEntry<bool> OffsetMeasureBeats = null!;
 
     internal static ConfigEntry<StrippedNoteTimingAccuracy> IgnoreAccuracyTypesThreshold = null!;
     
@@ -88,6 +89,9 @@ public partial class Plugin
         TimeMeasurementType = Config.Bind("General", nameof(TimeMeasurementType), TimeMeasurement.Time,
             "How to display time bar values");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeMeasurementType)}", "Time measurement type");
+        OffsetMeasureBeats = Config.Bind("General", nameof(OffsetMeasureBeats), true,
+            "Offset beat counter by +1 when showing time in measures");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(OffsetMeasureBeats)}", "Start beats at 1");
         
         EnableMultiplierBar = Config.Bind("General", nameof(EnableMultiplierBar), true,
             "Show the multiplier bar");
@@ -862,13 +866,26 @@ public partial class Plugin
             });
         #endregion
         
+        #region OffsetMeasureBeats
+        CustomGroup offsetMeasureBeatsGroup = UIHelper.CreateGroup(modGroup, "OffsetMeasureBeatsGroup");
+        offsetMeasureBeatsGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(offsetMeasureBeatsGroup, nameof(OffsetMeasureBeats),
+            $"{TRANSLATION_PREFIX}{nameof(OffsetMeasureBeats)}", OffsetMeasureBeats.Value, value =>
+            {
+                OffsetMeasureBeats.Value = value;
+            });
+        offsetMeasureBeatsGroup.GameObject.SetActive(TimeMeasurementType.Value is TimeMeasurement.Measures);
+        #endregion
+        
         #region TimeMeasurementType
         CustomGroup timeMeasurementTypeGroup = UIHelper.CreateGroup(modGroup, "TimeMeasurementTypeGroup");
         UIHelper.CreateSmallMultiChoiceButton(timeMeasurementTypeGroup, nameof(TimeMeasurementType),
             $"{TRANSLATION_PREFIX}{nameof(TimeMeasurementType)}", TimeMeasurementType.Value, value =>
             {
                 TimeMeasurementType.Value = value;
+                offsetMeasureBeatsGroup.GameObject.SetActive(TimeMeasurementType.Value is TimeMeasurement.Measures);
             });
+        timeMeasurementTypeGroup.Transform.SetSiblingIndex(offsetMeasureBeatsGroup.Transform.GetSiblingIndex());
         #endregion
         
         #region ShowOverbeatsAsMisses
