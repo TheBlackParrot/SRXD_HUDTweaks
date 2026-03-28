@@ -483,16 +483,17 @@ internal static class DomeHudPatches
             
             case TimeMeasurement.Measures:
                 TimeSignatureSegment timeSignatureSegment = trackData.GetTimeSignatureAtTime(playState.currentTrackTime);
+                IndexedPosition beatOffset = trackData.GetBeatAtTime(playState.currentTrackTime) - timeSignatureSegment.startingBeat.AsIndexedPosition;
+                
                 __instance.trackTimePassedText.IntParam1 = trackData.GetBarAtTime(playState.currentTrackTime).index;
-                __instance.trackTimePassedText.IntParam2 =
-                    ((trackData.GetBeatAtTime(playState.currentTrackTime).AsDouble - timeSignatureSegment.startingBeat.AsDouble) % timeSignatureSegment.beatsPerBar.Numerator)
-                    .FloorToInt();
+                __instance.trackTimePassedText.IntParam2 = (beatOffset.AsDouble % timeSignatureSegment.beatsPerBar.AsDouble).FloorToInt();
 
                 int finalSecond = trackData.GameplayEndTick.ToSecondsInt().Max(0) + 1;
                 TimeSignatureSegment finalTimeSignatureSegment = trackData.GetTimeSignatureAtTime(finalSecond);
+                IndexedPosition finalBeatOffset = trackData.GetBeatAtTime(finalSecond) - finalTimeSignatureSegment.startingBeat.AsIndexedPosition;
+                
                 __instance.trackLengthText.IntParam1 = trackData.GetBarAtTime(finalSecond).index;
-                __instance.trackLengthText.IntParam2 =
-                    ((trackData.GetBeatAtTime(finalSecond).AsDouble - finalTimeSignatureSegment.startingBeat.AsDouble) % finalTimeSignatureSegment.beatsPerBar.Numerator).FloorToInt();
+                __instance.trackLengthText.IntParam2 = (finalBeatOffset.AsDouble % finalTimeSignatureSegment.beatsPerBar.AsDouble).FloorToInt();
                 break;
         }
     }
