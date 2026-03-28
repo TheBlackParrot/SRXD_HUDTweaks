@@ -26,6 +26,13 @@ public partial class Plugin
     private static readonly Vector3 YellowHUDColor = new(4.977f, 0.859f, 0f);
     private static readonly Vector3 CyanHUDColor = new(Color.cyan.r, Color.cyan.g, Color.cyan.b); // close enough
     private static readonly Vector3 GreenHUDColor = new(Color.green.r, Color.green.g, Color.green.b); // close enough
+
+    private static readonly Vector3 DefaultAccuracyMissColor = new(1f, 0f, 0.286f);
+    private static readonly Vector3 DefaultAccuracyOkayColor = new(1f, 0.573f, 0f);
+    private static readonly Vector3 DefaultAccuracyGoodColor = new(1f, 1f, 0f);
+    private static readonly Vector3 DefaultAccuracyGreatColor = new(0.133f, 1f, 0f);
+    private static readonly Vector3 DefaultAccuracyPerfectColor = new(0f, 1f, 1f);
+    private static readonly Vector3 DefaultAccuracyPerfectPlusColor = new(1f, 0.733f, 1f);
     
     internal static ConfigEntry<bool> EnableAccuracyDisplay = null!;
     internal static ConfigEntry<bool> EnablePreciseHealth = null!;
@@ -36,6 +43,13 @@ public partial class Plugin
     internal static ConfigEntry<Vector3> Multiplier2XColor = null!;
     internal static ConfigEntry<Vector3> Multiplier3XColor = null!;
     internal static ConfigEntry<Vector3> Multiplier4XColor = null!;
+    
+    internal static ConfigEntry<Vector3> AccuracyMissColor = null!;
+    internal static ConfigEntry<Vector3> AccuracyOkayColor = null!;
+    internal static ConfigEntry<Vector3> AccuracyGoodColor = null!;
+    internal static ConfigEntry<Vector3> AccuracyGreatColor = null!;
+    internal static ConfigEntry<Vector3> AccuracyPerfectColor = null!;
+    internal static ConfigEntry<Vector3> AccuracyPerfectPlusColor = null!;
     
     internal static ConfigEntry<Vector3> NumberColor = null!;
     internal static ConfigEntry<Vector3> TextColor = null!;
@@ -130,6 +144,25 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier2XColor)}", "2x multiplier color");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier3XColor)}", "3x multiplier color");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(Multiplier4XColor)}", "4x multiplier color");
+        
+        AccuracyMissColor = Config.Bind("Colors", nameof(AccuracyMissColor), DefaultAccuracyMissColor, 
+            "Color for misses in the accuracy log");
+        AccuracyOkayColor = Config.Bind("Colors", nameof(AccuracyOkayColor), DefaultAccuracyOkayColor, 
+            "Color for Okay and Early timing judgements");
+        AccuracyGoodColor = Config.Bind("Colors", nameof(AccuracyGoodColor), DefaultAccuracyGoodColor, 
+            "Color for Good timing judgements");
+        AccuracyGreatColor = Config.Bind("Colors", nameof(AccuracyGreatColor), DefaultAccuracyGreatColor, 
+            "Color for Great timing judgements");
+        AccuracyPerfectColor = Config.Bind("Colors", nameof(AccuracyPerfectColor), DefaultAccuracyPerfectColor, 
+            "Color for Perfect timing judgements");
+        AccuracyPerfectPlusColor = Config.Bind("Colors", nameof(AccuracyPerfectPlusColor), DefaultAccuracyPerfectPlusColor, 
+            "Color for Perfect+ timing judgements");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyMissColor)}", "Miss color");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyOkayColor)}", "Okay/Early color");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyGoodColor)}", "Good color");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyGreatColor)}", "Great color");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectColor)}", "Perfect color");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectPlusColor)}", "Perfect+ color");
         
         NumberColor = Config.Bind("Colors", nameof(NumberColor), YellowHUDColor, 
             "Color for boldened numbers");
@@ -830,6 +863,258 @@ public partial class Plugin
             _ = RefreshEverythingGuh();
         });
         multiplier4XColorInputB.InputField.SetText(Multiplier4XColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region AccuracyMissColors
+        CustomGroup accuracyMissColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyMissColorGroup");
+        accuracyMissColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(accuracyMissColorGroup, "AccuracyMissColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyMissColor)}");
+        
+        CustomInputField accuracyMissColorInputR = UIHelper.CreateInputField(accuracyMissColorGroup, "AccuracyMissColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyMissColor.Value = AccuracyMissColor.Value with { x = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyMissColorInputR.InputField.SetText(AccuracyMissColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyMissColorInputG = UIHelper.CreateInputField(accuracyMissColorGroup, "AccuracyMissColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyMissColor.Value = AccuracyMissColor.Value with { y = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyMissColorInputG.InputField.SetText(AccuracyMissColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyMissColorInputB = UIHelper.CreateInputField(accuracyMissColorGroup, "AccuracyMissColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyMissColor.Value = AccuracyMissColor.Value with { z = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyMissColorInputB.InputField.SetText(AccuracyMissColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region AccuracyOkayColors
+        CustomGroup accuracyOkayColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyOkayColorGroup");
+        accuracyOkayColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(accuracyOkayColorGroup, "AccuracyOkayColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyOkayColor)}");
+        
+        CustomInputField accuracyOkayColorInputR = UIHelper.CreateInputField(accuracyOkayColorGroup, "AccuracyOkayColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyOkayColor.Value = AccuracyOkayColor.Value with { x = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyOkayColorInputR.InputField.SetText(AccuracyOkayColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyOkayColorInputG = UIHelper.CreateInputField(accuracyOkayColorGroup, "AccuracyOkayColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyOkayColor.Value = AccuracyOkayColor.Value with { y = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyOkayColorInputG.InputField.SetText(AccuracyOkayColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyOkayColorInputB = UIHelper.CreateInputField(accuracyOkayColorGroup, "AccuracyOkayColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyOkayColor.Value = AccuracyOkayColor.Value with { z = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyOkayColorInputB.InputField.SetText(AccuracyOkayColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region AccuracyGoodColors
+        CustomGroup accuracyGoodColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyGoodColorGroup");
+        accuracyGoodColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(accuracyGoodColorGroup, "AccuracyGoodColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyGoodColor)}");
+        
+        CustomInputField accuracyGoodColorInputR = UIHelper.CreateInputField(accuracyGoodColorGroup, "AccuracyGoodColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyGoodColor.Value = AccuracyGoodColor.Value with { x = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyGoodColorInputR.InputField.SetText(AccuracyGoodColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyGoodColorInputG = UIHelper.CreateInputField(accuracyGoodColorGroup, "AccuracyGoodColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyGoodColor.Value = AccuracyGoodColor.Value with { y = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyGoodColorInputG.InputField.SetText(AccuracyGoodColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyGoodColorInputB = UIHelper.CreateInputField(accuracyGoodColorGroup, "AccuracyGoodColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyGoodColor.Value = AccuracyGoodColor.Value with { z = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyGoodColorInputB.InputField.SetText(AccuracyGoodColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region AccuracyGreatColors
+        CustomGroup accuracyGreatColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyGreatColorGroup");
+        accuracyGreatColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(accuracyGreatColorGroup, "AccuracyGreatColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyGreatColor)}");
+        
+        CustomInputField accuracyGreatColorInputR = UIHelper.CreateInputField(accuracyGreatColorGroup, "AccuracyGreatColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyGreatColor.Value = AccuracyGreatColor.Value with { x = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyGreatColorInputR.InputField.SetText(AccuracyGreatColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyGreatColorInputG = UIHelper.CreateInputField(accuracyGreatColorGroup, "AccuracyGreatColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyGreatColor.Value = AccuracyGreatColor.Value with { y = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyGreatColorInputG.InputField.SetText(AccuracyGreatColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyGreatColorInputB = UIHelper.CreateInputField(accuracyGreatColorGroup, "AccuracyGreatColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyGreatColor.Value = AccuracyGreatColor.Value with { z = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyGreatColorInputB.InputField.SetText(AccuracyGreatColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region AccuracyPerfectColors
+        CustomGroup accuracyPerfectColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyPerfectColorGroup");
+        accuracyPerfectColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(accuracyPerfectColorGroup, "AccuracyPerfectColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectColor)}");
+        
+        CustomInputField accuracyPerfectColorInputR = UIHelper.CreateInputField(accuracyPerfectColorGroup, "AccuracyPerfectColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyPerfectColor.Value = AccuracyPerfectColor.Value with { x = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyPerfectColorInputR.InputField.SetText(AccuracyPerfectColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyPerfectColorInputG = UIHelper.CreateInputField(accuracyPerfectColorGroup, "AccuracyPerfectColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyPerfectColor.Value = AccuracyPerfectColor.Value with { y = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyPerfectColorInputG.InputField.SetText(AccuracyPerfectColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyPerfectColorInputB = UIHelper.CreateInputField(accuracyPerfectColorGroup, "AccuracyPerfectColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyPerfectColor.Value = AccuracyPerfectColor.Value with { z = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyPerfectColorInputB.InputField.SetText(AccuracyPerfectColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        #endregion
+        
+        #region AccuracyPerfectPlusColors
+        CustomGroup accuracyPerfectPlusColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyPerfectPlusColorGroup");
+        accuracyPerfectPlusColorGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateLabel(accuracyPerfectPlusColorGroup, "AccuracyPerfectPlusColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectPlusColor)}");
+        
+        CustomInputField accuracyPerfectPlusColorInputR = UIHelper.CreateInputField(accuracyPerfectPlusColorGroup, "AccuracyPerfectPlusColorInputR", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyPerfectPlusColor.Value = AccuracyPerfectPlusColor.Value with { x = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyPerfectPlusColorInputR.InputField.SetText(AccuracyPerfectPlusColor.Value.x.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyPerfectPlusColorInputG = UIHelper.CreateInputField(accuracyPerfectPlusColorGroup, "AccuracyPerfectPlusColorInputG", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyPerfectPlusColor.Value = AccuracyPerfectPlusColor.Value with { y = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyPerfectPlusColorInputG.InputField.SetText(AccuracyPerfectPlusColor.Value.y.ToString(CultureInfo.InvariantCulture));
+        
+        CustomInputField accuracyPerfectPlusColorInputB = UIHelper.CreateInputField(accuracyPerfectPlusColorGroup, "AccuracyPerfectPlusColorInputB", (s, newValue) =>
+        {
+            if (!float.TryParse(newValue, out float value))
+            {
+                return;
+            }
+
+            AccuracyPerfectPlusColor.Value = AccuracyPerfectPlusColor.Value with { z = Math.Max(value, 0f) };
+            _ = RefreshEverythingGuh();
+        });
+        accuracyPerfectPlusColorInputB.InputField.SetText(AccuracyPerfectPlusColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "ExtrasHeader", $"{TRANSLATION_PREFIX}Extras", false);

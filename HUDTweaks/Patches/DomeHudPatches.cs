@@ -64,6 +64,10 @@ internal class DomeHudContainer
     private readonly Transform _timeBarContainer;
     private readonly Transform _mainHudLeftContainer;
     private readonly Transform _mainHudRightContainer;
+    
+    internal readonly Transform _accuracyBarContainer;
+    internal readonly HudTimingAccuracyBar _hudTimingAccuracyBar;
+    internal readonly Transform _accuracyBarRectangles;
 
     public DomeHudContainer(DomeHud domeHud)
     {
@@ -73,6 +77,10 @@ internal class DomeHudContainer
         _timeBarContainer = domeHud.wheelWarpTransform.Find("HudWheelRect/Time Bar Container");
         _mainHudLeftContainer = domeHud.warpTransform.Find("XMover/HudRect/LeftContainer");
         _mainHudRightContainer = domeHud.warpTransform.Find("XMover/HudRect/RightContainer");
+        
+        _accuracyBarContainer = domeHud.wheelWarpTransform.Find("HudWheelRect/Accuracy Bar Container");
+        _hudTimingAccuracyBar = _accuracyBarContainer.Find("Accuracy Bar").GetComponent<HudTimingAccuracyBar>();
+        _accuracyBarRectangles = _accuracyBarContainer.Find("Rectangles");
         
         _scoreText = domeHud.number.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();

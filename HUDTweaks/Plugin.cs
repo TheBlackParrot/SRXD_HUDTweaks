@@ -155,6 +155,8 @@ public partial class Plugin : BaseUnityPlugin
         Color healthColor = HealthColor.Value.ToColor();
         Color textColor = TextColor.Value.ToColor();
         
+        ColorSystem.Instance.AssignColorPalettes();
+        
         foreach (KeyValuePair<DomeHud, DomeHudContainer> hudContainer in DomeHudPatches.DomeHudContainers)
         {
             DomeHud hud = hudContainer.Key;
@@ -267,5 +269,6 @@ public partial class Plugin : BaseUnityPlugin
         DomeHudPatches.UpdateOffsets();
         await DomeHudPatches.ResetTranslatedTexts();
         await UpdateColors();
+        ColorSystem.Instance.AssignColorPalettes();
     }
 }
