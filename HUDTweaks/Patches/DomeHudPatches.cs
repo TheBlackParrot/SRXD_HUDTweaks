@@ -568,4 +568,13 @@ internal static class DomeHudPatches
             PlayState.Active.Hud.AddToAccuracyLog(NoteTimingAccuracy.Failed);
         }
     }
+
+    [HarmonyPatch(typeof(HudTimingAccuracyBar), nameof(HudTimingAccuracyBar.Init))]
+    [HarmonyPrefix]
+    // ReSharper disable once InconsistentNaming
+    private static bool HudTimingAccuracyBar_InitPatch(HudTimingAccuracyBar __instance)
+    {
+        __instance.maxNotesDisplayed = Plugin.MaximumAccuracyBarNotes.Value;
+        return true;
+    }
 }

@@ -81,6 +81,8 @@ public partial class Plugin
     internal static ConfigEntry<int> TimeBarWidth = null!;
     internal static ConfigEntry<int> MainHudVerticalOffset = null!;
 
+    internal static ConfigEntry<int> MaximumAccuracyBarNotes = null!;
+
     private void RegisterConfigEntries()
     {
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
@@ -212,6 +214,10 @@ public partial class Plugin
         TimeBarWidth = Config.Bind("Offsets", nameof(TimeBarWidth), 0,
             "Extra width for the time bar");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}", "Time bar extra width");
+        
+        MaximumAccuracyBarNotes = Config.Bind("General", nameof(MaximumAccuracyBarNotes), 8,
+            "Amount of notes for the accuracy bar to keep track of");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(MaximumAccuracyBarNotes)}", "Accuracy bar note ticks");
         
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
         
@@ -1181,6 +1187,29 @@ public partial class Plugin
             {
                 ShowOverbeatsAsMisses.Value = value;
             });
+        #endregion
+        
+        #region MaximumAccuracyBarNotes
+        CustomGroup maximumAccuracyBarNotesGroup = UIHelper.CreateGroup(modGroup, "MaximumAccuracyBarNotesGroup");
+        UIHelper.CreateSmallMultiChoiceButton(maximumAccuracyBarNotesGroup, nameof(MaximumAccuracyBarNotes), $"{TRANSLATION_PREFIX}{nameof(MaximumAccuracyBarNotes)}",
+            MaximumAccuracyBarNotes.Value, (value) =>
+            {
+                MaximumAccuracyBarNotes.Value = value;
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await Awaitable.MainThreadAsync();
+                        await UpdateAccuracyBar();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.LogError(e);
+                    }
+                });
+            },
+            () => new IntRange(1, 101), // we need 101 to hit 100, wtf
+            v => v.ToString());
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "TrackInfoHeader", $"{TRANSLATION_PREFIX}{nameof(TrackInfoText)}", false);
