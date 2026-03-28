@@ -448,7 +448,7 @@ internal static class DomeHudPatches
     // ReSharper disable once InconsistentNaming
     public static void DomeHudTrackTimeBar_LateUpdatePatch(DomeHudTrackTimeBar __instance)
     {
-        if (!Plugin.ShowTimeInBeats.Value)
+        if (Plugin.TimeMeasurementType.Value is TimeMeasurement.Time)
         {
             return;
         }
@@ -460,21 +460,41 @@ internal static class DomeHudPatches
             return;
         }
         
-        double currentBeat = trackData.GetBeatAtTime(playState.currentTrackTime).AsDouble;
-        __instance.trackTimePassedText.IntParam1 = currentBeat.FloorToInt();
-        int fraction = ((currentBeat % 1) * 100).FloorToInt();
-        __instance.trackTimePassedText.IntParam2 = (fraction - (fraction % 50)) / 50;
-
         if (playState.SetupParameters.playType == PlayType.Endless)
         {
             return;
         }
+
+        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault (Time and default are impossible)
+        switch (Plugin.TimeMeasurementType.Value)
+        {
+            case TimeMeasurement.Beats:
+                double currentBeat = trackData.GetBeatAtTime(playState.currentTrackTime).AsDouble;
+                __instance.trackTimePassedText.IntParam1 = currentBeat.FloorToInt();
+                int fraction = ((currentBeat % 1) * 100).FloorToInt();
+                __instance.trackTimePassedText.IntParam2 = (fraction - (fraction % 50)) / 50;
         
-        // yeah this updates every frame too, buh
-        double finalBeat = trackData.GetBeatAtTime(trackData.GameplayEndTick.ToSecondsInt().Max(0) + 1).AsDouble;
-        __instance.trackLengthText.IntParam1 = finalBeat.FloorToInt();
-        int lengthFraction = ((finalBeat % 1) * 100).FloorToInt();
-        __instance.trackLengthText.IntParam2 = (lengthFraction - (lengthFraction % 50)) / 50;
+                // yeah this updates every frame too, buh
+                double finalBeat = trackData.GetBeatAtTime(trackData.GameplayEndTick.ToSecondsInt().Max(0) + 1).AsDouble;
+                __instance.trackLengthText.IntParam1 = finalBeat.FloorToInt();
+                int lengthFraction = ((finalBeat % 1) * 100).FloorToInt();
+                __instance.trackLengthText.IntParam2 = (lengthFraction - (lengthFraction % 50)) / 50;
+                break;
+            
+            case TimeMeasurement.Measures:
+                TimeSignatureSegment timeSignatureSegment = trackData.GetTimeSignatureAtTime(playState.currentTrackTime);
+                __instance.trackTimePassedText.IntParam1 = trackData.GetBarAtTime(playState.currentTrackTime).index;
+                __instance.trackTimePassedText.IntParam2 =
+                    ((trackData.GetBeatAtTime(playState.currentTrackTime).AsDouble - timeSignatureSegment.startingBeat.AsDouble) % timeSignatureSegment.beatsPerBar.Numerator)
+                    .FloorToInt();
+
+                int finalSecond = trackData.GameplayEndTick.ToSecondsInt().Max(0) + 1;
+                TimeSignatureSegment finalTimeSignatureSegment = trackData.GetTimeSignatureAtTime(finalSecond);
+                __instance.trackLengthText.IntParam1 = trackData.GetBarAtTime(finalSecond).index;
+                __instance.trackLengthText.IntParam2 =
+                    ((trackData.GetBeatAtTime(finalSecond).AsDouble - finalTimeSignatureSegment.startingBeat.AsDouble) % finalTimeSignatureSegment.beatsPerBar.Numerator).FloorToInt();
+                break;
+        }
     }
     
     [HarmonyPatch(typeof(DomeHud), nameof(DomeHud.AddToAccuracyLog))]

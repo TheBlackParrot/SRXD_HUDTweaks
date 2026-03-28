@@ -10,6 +10,13 @@ using UnityEngine.UI;
 
 namespace HUDTweaks;
 
+public enum TimeMeasurement
+{
+    Time = 0,
+    Beats = 1,
+    Measures = 2
+}
+
 public partial class Plugin
 {
     // note to self: BepInEx forces maximum values in the Color type to 1f, for. some reason
@@ -51,7 +58,7 @@ public partial class Plugin
     internal static ConfigEntry<string> CustomCreditText = null!;
     internal static ConfigEntry<string> TrackInfoText = null!;
     
-    internal static ConfigEntry<bool> ShowTimeInBeats = null!;
+    internal static ConfigEntry<TimeMeasurement> TimeMeasurementType = null!;
 
     internal static ConfigEntry<StrippedNoteTimingAccuracy> IgnoreAccuracyTypesThreshold = null!;
     
@@ -78,9 +85,9 @@ public partial class Plugin
             "Show Perfect+ count beside accuracy");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePerfectPlusCount)}", "Show Perfect+ count beside accuracy");
         
-        ShowTimeInBeats = Config.Bind("General", nameof(ShowTimeInBeats), false,
-            "Show time values in beats");
-        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", "Show time in beats");
+        TimeMeasurementType = Config.Bind("General", nameof(TimeMeasurementType), TimeMeasurement.Time,
+            "How to display time bar values");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeMeasurementType)}", "Time measurement type");
         
         EnableMultiplierBar = Config.Bind("General", nameof(EnableMultiplierBar), true,
             "Show the multiplier bar");
@@ -855,13 +862,12 @@ public partial class Plugin
             });
         #endregion
         
-        #region ShowTimeInBeats
-        CustomGroup showTimeInBeatsGroup = UIHelper.CreateGroup(modGroup, "ShowTimeInBeatsGroup");
-        showTimeInBeatsGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateSmallToggle(showTimeInBeatsGroup, nameof(ShowTimeInBeats),
-            $"{TRANSLATION_PREFIX}{nameof(ShowTimeInBeats)}", ShowTimeInBeats.Value, value =>
+        #region TimeMeasurementType
+        CustomGroup timeMeasurementTypeGroup = UIHelper.CreateGroup(modGroup, "TimeMeasurementTypeGroup");
+        UIHelper.CreateSmallMultiChoiceButton(timeMeasurementTypeGroup, nameof(TimeMeasurementType),
+            $"{TRANSLATION_PREFIX}{nameof(TimeMeasurementType)}", TimeMeasurementType.Value, value =>
             {
-                ShowTimeInBeats.Value = value;
+                TimeMeasurementType.Value = value;
             });
         #endregion
         
