@@ -88,6 +88,8 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Toggles", "Toggles");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Colors", "Colors");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}MultiplierColors", "Multiplier Colors");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TimingColors", "Timing Judgement Colors");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Extras", "Extras");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Offsets", "Offsets");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}GitHubButtonText", $"{nameof(HUDTweaks)} Releases (GitHub)");
@@ -703,6 +705,8 @@ public partial class Plugin
         fcColorInputB.InputField.SetText(FcColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
         
+        UIHelper.CreateSectionHeader(modGroup, "MultiplierColorsHeader", $"{TRANSLATION_PREFIX}MultiplierColors", false);
+        
         #region Multiplier1XColors
         CustomGroup multiplier1XColorGroup = UIHelper.CreateGroup(modGroup, "Multiplier1XColorGroup");
         multiplier1XColorGroup.LayoutDirection = Axis.Horizontal;
@@ -870,6 +874,8 @@ public partial class Plugin
         });
         multiplier4XColorInputB.InputField.SetText(Multiplier4XColor.Value.z.ToString(CultureInfo.InvariantCulture));
         #endregion
+        
+        UIHelper.CreateSectionHeader(modGroup, "TimingColorsHeader", $"{TRANSLATION_PREFIX}TimingColors", false);
         
         #region AccuracyMissColors
         CustomGroup accuracyMissColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyMissColorGroup");
