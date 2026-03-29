@@ -242,6 +242,7 @@ public partial class Plugin
     }
 
     private const int TAG_REFERENCE_PREFERRED_WIDTH = 500;
+    private const int COLOR_LABEL_PREFERRED_WIDTH = 300;
 
     private static void CreateReferenceTagRow(CustomGroup modGroup, string which, string? tagOverride = null)
     {
@@ -414,7 +415,9 @@ public partial class Plugin
         #region NumberColor
         CustomGroup numberColorGroup = UIHelper.CreateGroup(modGroup, "NumberColorGroup");
         numberColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(numberColorGroup, "NumberColorLabel", $"{TRANSLATION_PREFIX}{nameof(NumberColor)}");
+        CustomTextComponent numberColorLabel =
+            UIHelper.CreateLabel(numberColorGroup, "NumberColorLabel", $"{TRANSLATION_PREFIX}{nameof(NumberColor)}");
+        numberColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField numberColorInputR = UIHelper.CreateInputField(numberColorGroup, "NumberColorInputR", (s, newValue) =>
         {
@@ -456,7 +459,9 @@ public partial class Plugin
         #region TextColors
         CustomGroup textColorGroup = UIHelper.CreateGroup(modGroup, "TextColorGroup");
         textColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(textColorGroup, "TextColorLabel", $"{TRANSLATION_PREFIX}{nameof(TextColor)}");
+        CustomTextComponent textColorLabel =
+            UIHelper.CreateLabel(textColorGroup, "TextColorLabel", $"{TRANSLATION_PREFIX}{nameof(TextColor)}");
+        textColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField textColorInputR = UIHelper.CreateInputField(textColorGroup, "TextColorInputR", (s, newValue) =>
         {
@@ -498,7 +503,9 @@ public partial class Plugin
         #region TimeColors
         CustomGroup timeColorGroup = UIHelper.CreateGroup(modGroup, "TimeColorGroup");
         timeColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(timeColorGroup, "TimeColorLabel", $"{TRANSLATION_PREFIX}{nameof(TimeColor)}");
+        CustomTextComponent timeColorLabel =
+            UIHelper.CreateLabel(timeColorGroup, "TimeColorLabel", $"{TRANSLATION_PREFIX}{nameof(TimeColor)}");
+        timeColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField timeColorInputR = UIHelper.CreateInputField(timeColorGroup, "TimeColorInputR", (s, newValue) =>
         {
@@ -540,7 +547,9 @@ public partial class Plugin
         #region HealthColors
         CustomGroup healthColorGroup = UIHelper.CreateGroup(modGroup, "HealthColorGroup");
         healthColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(healthColorGroup, "HealthColorLabel", $"{TRANSLATION_PREFIX}{nameof(HealthColor)}");
+        CustomTextComponent healthColorLabel =
+            UIHelper.CreateLabel(healthColorGroup, "HealthColorLabel", $"{TRANSLATION_PREFIX}{nameof(HealthColor)}");
+        healthColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField healthColorInputR = UIHelper.CreateInputField(healthColorGroup, "HealthColorInputR", (s, newValue) =>
         {
@@ -582,7 +591,9 @@ public partial class Plugin
         #region HurtColors
         CustomGroup hurtColorGroup = UIHelper.CreateGroup(modGroup, "HurtColorGroup");
         hurtColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(hurtColorGroup, "HurtColorLabel", $"{TRANSLATION_PREFIX}{nameof(HurtColor)}");
+        CustomTextComponent hurtColorLabel =
+            UIHelper.CreateLabel(hurtColorGroup, "HurtColorLabel", $"{TRANSLATION_PREFIX}{nameof(HurtColor)}");
+        hurtColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField hurtColorInputR = UIHelper.CreateInputField(hurtColorGroup, "HurtColorInputR", (s, newValue) =>
         {
@@ -624,7 +635,9 @@ public partial class Plugin
         #region PfcColors
         CustomGroup pfcColorGroup = UIHelper.CreateGroup(modGroup, "PfcColorGroup");
         pfcColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(pfcColorGroup, "PfcColorLabel", $"{TRANSLATION_PREFIX}{nameof(PfcColor)}");
+        CustomTextComponent pfcColorLabel =
+            UIHelper.CreateLabel(pfcColorGroup, "PfcColorLabel", $"{TRANSLATION_PREFIX}{nameof(PfcColor)}");
+        pfcColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField pfcColorInputR = UIHelper.CreateInputField(pfcColorGroup, "PfcColorInputR", (s, newValue) =>
         {
@@ -666,7 +679,9 @@ public partial class Plugin
         #region FcColors
         CustomGroup fcColorGroup = UIHelper.CreateGroup(modGroup, "FcColorGroup");
         fcColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(fcColorGroup, "FcColorLabel", $"{TRANSLATION_PREFIX}{nameof(FcColor)}");
+        CustomTextComponent fcColorLabel =
+            UIHelper.CreateLabel(fcColorGroup, "FcColorLabel", $"{TRANSLATION_PREFIX}{nameof(FcColor)}");
+        fcColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField fcColorInputR = UIHelper.CreateInputField(fcColorGroup, "FcColorInputR", (s, newValue) =>
         {
@@ -710,7 +725,9 @@ public partial class Plugin
         #region Multiplier1XColors
         CustomGroup multiplier1XColorGroup = UIHelper.CreateGroup(modGroup, "Multiplier1XColorGroup");
         multiplier1XColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(multiplier1XColorGroup, "Multiplier1XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier1XColor)}");
+        CustomTextComponent multiplier1XColorLabel =
+            UIHelper.CreateLabel(multiplier1XColorGroup, "Multiplier1XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier1XColor)}");
+        multiplier1XColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField multiplier1XColorInputR = UIHelper.CreateInputField(multiplier1XColorGroup, "Multiplier1XColorInputR", (s, newValue) =>
         {
@@ -752,7 +769,9 @@ public partial class Plugin
         #region Multiplier2XColors
         CustomGroup multiplier2XColorGroup = UIHelper.CreateGroup(modGroup, "Multiplier2XColorGroup");
         multiplier2XColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(multiplier2XColorGroup, "Multiplier2XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier2XColor)}");
+        CustomTextComponent multiplier2XColorLabel =
+            UIHelper.CreateLabel(multiplier2XColorGroup, "Multiplier2XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier2XColor)}");
+        multiplier2XColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField multiplier2XColorInputR = UIHelper.CreateInputField(multiplier2XColorGroup, "Multiplier2XColorInputR", (s, newValue) =>
         {
@@ -794,7 +813,9 @@ public partial class Plugin
         #region Multiplier3XColors
         CustomGroup multiplier3XColorGroup = UIHelper.CreateGroup(modGroup, "Multiplier3XColorGroup");
         multiplier3XColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(multiplier3XColorGroup, "Multiplier3XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier3XColor)}");
+        CustomTextComponent multiplier3XColorLabel =
+            UIHelper.CreateLabel(multiplier3XColorGroup, "Multiplier3XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier3XColor)}");
+        multiplier3XColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField multiplier3XColorInputR = UIHelper.CreateInputField(multiplier3XColorGroup, "Multiplier3XColorInputR", (s, newValue) =>
         {
@@ -836,7 +857,9 @@ public partial class Plugin
         #region Multiplier4XColors
         CustomGroup multiplier4XColorGroup = UIHelper.CreateGroup(modGroup, "Multiplier4XColorGroup");
         multiplier4XColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(multiplier4XColorGroup, "Multiplier4XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier4XColor)}");
+        CustomTextComponent multiplier4XColorLabel =
+            UIHelper.CreateLabel(multiplier4XColorGroup, "Multiplier4XColorLabel", $"{TRANSLATION_PREFIX}{nameof(Multiplier4XColor)}");
+        multiplier4XColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField multiplier4XColorInputR = UIHelper.CreateInputField(multiplier4XColorGroup, "Multiplier4XColorInputR", (s, newValue) =>
         {
@@ -880,7 +903,9 @@ public partial class Plugin
         #region AccuracyMissColors
         CustomGroup accuracyMissColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyMissColorGroup");
         accuracyMissColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(accuracyMissColorGroup, "AccuracyMissColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyMissColor)}");
+        CustomTextComponent accuracyMissColorLabel =
+            UIHelper.CreateLabel(accuracyMissColorGroup, "AccuracyMissColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyMissColor)}");
+        accuracyMissColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField accuracyMissColorInputR = UIHelper.CreateInputField(accuracyMissColorGroup, "AccuracyMissColorInputR", (s, newValue) =>
         {
@@ -922,7 +947,9 @@ public partial class Plugin
         #region AccuracyOkayColors
         CustomGroup accuracyOkayColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyOkayColorGroup");
         accuracyOkayColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(accuracyOkayColorGroup, "AccuracyOkayColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyOkayColor)}");
+        CustomTextComponent accuracyOkayColorLabel =
+            UIHelper.CreateLabel(accuracyOkayColorGroup, "AccuracyOkayColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyOkayColor)}");
+        accuracyOkayColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField accuracyOkayColorInputR = UIHelper.CreateInputField(accuracyOkayColorGroup, "AccuracyOkayColorInputR", (s, newValue) =>
         {
@@ -964,7 +991,9 @@ public partial class Plugin
         #region AccuracyGoodColors
         CustomGroup accuracyGoodColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyGoodColorGroup");
         accuracyGoodColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(accuracyGoodColorGroup, "AccuracyGoodColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyGoodColor)}");
+        CustomTextComponent accuracyGoodColorLabel =
+            UIHelper.CreateLabel(accuracyGoodColorGroup, "AccuracyGoodColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyGoodColor)}");
+        accuracyGoodColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField accuracyGoodColorInputR = UIHelper.CreateInputField(accuracyGoodColorGroup, "AccuracyGoodColorInputR", (s, newValue) =>
         {
@@ -1006,7 +1035,9 @@ public partial class Plugin
         #region AccuracyGreatColors
         CustomGroup accuracyGreatColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyGreatColorGroup");
         accuracyGreatColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(accuracyGreatColorGroup, "AccuracyGreatColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyGreatColor)}");
+        CustomTextComponent accuracyGreatColorLabel =
+            UIHelper.CreateLabel(accuracyGreatColorGroup, "AccuracyGreatColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyGreatColor)}");
+        accuracyGreatColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField accuracyGreatColorInputR = UIHelper.CreateInputField(accuracyGreatColorGroup, "AccuracyGreatColorInputR", (s, newValue) =>
         {
@@ -1048,7 +1079,9 @@ public partial class Plugin
         #region AccuracyPerfectColors
         CustomGroup accuracyPerfectColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyPerfectColorGroup");
         accuracyPerfectColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(accuracyPerfectColorGroup, "AccuracyPerfectColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectColor)}");
+        CustomTextComponent accuracyPerfectColorLabel =
+            UIHelper.CreateLabel(accuracyPerfectColorGroup, "AccuracyPerfectColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectColor)}");
+        accuracyPerfectColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField accuracyPerfectColorInputR = UIHelper.CreateInputField(accuracyPerfectColorGroup, "AccuracyPerfectColorInputR", (s, newValue) =>
         {
@@ -1090,7 +1123,9 @@ public partial class Plugin
         #region AccuracyPerfectPlusColors
         CustomGroup accuracyPerfectPlusColorGroup = UIHelper.CreateGroup(modGroup, "AccuracyPerfectPlusColorGroup");
         accuracyPerfectPlusColorGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(accuracyPerfectPlusColorGroup, "AccuracyPerfectPlusColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectPlusColor)}");
+        CustomTextComponent accuracyPerfectPlusColorLabel =
+            UIHelper.CreateLabel(accuracyPerfectPlusColorGroup, "AccuracyPerfectPlusColorLabel", $"{TRANSLATION_PREFIX}{nameof(AccuracyPerfectPlusColor)}");
+        accuracyPerfectPlusColorLabel.Transform.GetComponent<LayoutElement>().preferredWidth = COLOR_LABEL_PREFERRED_WIDTH;
         
         CustomInputField accuracyPerfectPlusColorInputR = UIHelper.CreateInputField(accuracyPerfectPlusColorGroup, "AccuracyPerfectPlusColorInputR", (s, newValue) =>
         {
