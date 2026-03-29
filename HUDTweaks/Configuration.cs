@@ -243,6 +243,7 @@ public partial class Plugin
 
     private const int TAG_REFERENCE_PREFERRED_WIDTH = 500;
     private const int COLOR_LABEL_PREFERRED_WIDTH = 300;
+    private const int CREDIT_LABEL_PREFERRED_WIDTH = 75;
 
     private static void CreateReferenceTagRow(CustomGroup modGroup, string which, string? tagOverride = null)
     {
@@ -1258,7 +1259,9 @@ public partial class Plugin
         #region NonCustomCreditText
         CustomGroup nonCustomCreditTextGroup = UIHelper.CreateGroup(modGroup, "NonCustomCreditTextGroup");
         nonCustomCreditTextGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(nonCustomCreditTextGroup, "NonCustomCreditTextLabel", $"{TRANSLATION_PREFIX}{nameof(NonCustomCreditText)}");
+        CustomTextComponent nonCustomCreditLabel =
+            UIHelper.CreateLabel(nonCustomCreditTextGroup, "NonCustomCreditTextLabel", $"{TRANSLATION_PREFIX}{nameof(NonCustomCreditText)}");
+        nonCustomCreditLabel.Transform.GetComponent<LayoutElement>().preferredWidth = CREDIT_LABEL_PREFERRED_WIDTH;
         
         CustomInputField nonCustomCreditTextInput = UIHelper.CreateInputField(nonCustomCreditTextGroup, "NonCustomCreditTextInput", (_, value) =>
         {
@@ -1282,7 +1285,9 @@ public partial class Plugin
         #region CustomCreditText
         CustomGroup customCreditTextGroup = UIHelper.CreateGroup(modGroup, "CustomCreditTextGroup");
         customCreditTextGroup.LayoutDirection = Axis.Horizontal;
-        UIHelper.CreateLabel(customCreditTextGroup, "CustomCreditTextLabel", $"{TRANSLATION_PREFIX}{nameof(CustomCreditText)}");
+        CustomTextComponent customCreditLabel =
+            UIHelper.CreateLabel(customCreditTextGroup, "CustomCreditTextLabel", $"{TRANSLATION_PREFIX}{nameof(CustomCreditText)}");
+        customCreditLabel.Transform.GetComponent<LayoutElement>().preferredWidth = CREDIT_LABEL_PREFERRED_WIDTH;
         
         CustomInputField customCreditTextInput = UIHelper.CreateInputField(customCreditTextGroup, "CustomCreditTextInput", (_, value) =>
         {
