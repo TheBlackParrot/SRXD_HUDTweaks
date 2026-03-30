@@ -35,6 +35,7 @@ public partial class Plugin
     private static readonly Vector3 DefaultAccuracyPerfectPlusColor = new(1f, 0.733f, 1f);
     
     internal static ConfigEntry<bool> EnableAccuracyDisplay = null!;
+    internal static ConfigEntry<bool> UseSubtractiveScoring = null!;
     internal static ConfigEntry<bool> EnablePreciseHealth = null!;
     internal static ConfigEntry<bool> EnablePerfectPlusCount = null!;
     internal static ConfigEntry<bool> ShowOverbeatsAsMisses = null!;
@@ -99,6 +100,9 @@ public partial class Plugin
         EnableAccuracyDisplay = Config.Bind("General", nameof(EnableAccuracyDisplay), false,
             "Show the current accuracy in place of the \"SCORE\" label");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableAccuracyDisplay)}", "Replace \"SCORE\" with accuracy");
+        UseSubtractiveScoring = Config.Bind("General", nameof(UseSubtractiveScoring), false,
+            "Display score as decreasing from the maximum possible score");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(UseSubtractiveScoring)}", "Use subtractive scoring");
         EnablePreciseHealth = Config.Bind("General", nameof(EnablePreciseHealth), false,
             "Show the current exact health value in place of the \"HEALTH\" label");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnablePreciseHealth)}", "Replace \"HEALTH\" with health");
@@ -1198,6 +1202,16 @@ public partial class Plugin
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "ExtrasHeader", $"{TRANSLATION_PREFIX}Extras", false);
+        
+        #region UseSubtractiveScoring
+        CustomGroup useSubtractiveScoringGroup = UIHelper.CreateGroup(modGroup, "UseSubtractiveScoringGroup");
+        useSubtractiveScoringGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(useSubtractiveScoringGroup, nameof(UseSubtractiveScoring),
+            $"{TRANSLATION_PREFIX}{nameof(UseSubtractiveScoring)}", UseSubtractiveScoring.Value, value =>
+            {
+                UseSubtractiveScoring.Value = value;
+            });
+        #endregion
         
         #region EnableAccuracyDisplay
         CustomGroup enableAccuracyDisplayGroup = UIHelper.CreateGroup(modGroup, "EnableAccuracyDisplayGroup");

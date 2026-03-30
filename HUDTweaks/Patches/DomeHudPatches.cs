@@ -30,10 +30,13 @@ internal class DomeHudContainer
         { DlcAbbreviations.SP, "Supporter Pack DLC" },
         { DlcAbbreviations.IN, "Indie Pack DLC" }
     };
+
+    internal static int MaximumPossibleScore = 0; 
     
     private readonly DomeHud _domeHud;
     
     private readonly Transform _scoreText;
+    private readonly TextNumber _scoreTextNumber;
     private readonly CustomTextMeshPro _scoreTextTMP;
     internal readonly MeshRenderer ScoreTextMeshRenderer;
     
@@ -82,7 +85,8 @@ internal class DomeHudContainer
         _hudTimingAccuracyBar = _accuracyBarContainer.Find("Accuracy Bar").GetComponent<HudTimingAccuracyBar>();
         _accuracyBarRectangles = _accuracyBarContainer.Find("Rectangles");
         
-        _scoreText = domeHud.number.gameObject.transform.parent.parent.Find("ScoreText");
+        _scoreTextNumber = domeHud.number;
+        _scoreText = _scoreTextNumber.gameObject.transform.parent.parent.Find("ScoreText");
         _scoreTextTMP = _scoreText.GetComponent<CustomTextMeshPro>();
         ScoreTextMeshRenderer = _scoreText.GetComponent<MeshRenderer>();
         _scoreText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
@@ -199,12 +203,22 @@ internal class DomeHudContainer
 
     internal void Update()
     {
-        if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value)
+        ScoreState? scoreState = _domeHud.PlayState.scoreState;
+        
+        if (_scoreTextNumber != null && Plugin.UseSubtractiveScoring.Value && scoreState != null)
         {
-            ScoreState scoreState = _domeHud.PlayState.scoreState;
-            float accuracy = (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
+            _scoreTextNumber.desiredNumber = MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4);
+        }
+        if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value && scoreState != null)
+        {
+            int currentScore = Plugin.UseSubtractiveScoring.Value
+                ? MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4)
+                : scoreState.TotalScore;
+            float accuracy = Plugin.UseSubtractiveScoring.Value
+                ? (currentScore / (float)MaximumPossibleScore) * 100
+                : (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
 
-            string accString = $"{(float.IsNaN(accuracy) ? 100 : accuracy):0.00}%";
+            string accString = $"{(float.IsNaN(accuracy) || float.IsInfinity(accuracy) ? 100 : accuracy):0.00}%";
             string perfectPlusString = Plugin.EnablePerfectPlusCount.Value
                 ? $" <alpha=#80>({scoreState.CurrentTotals.flawlessPlusCount})"
                 : "";
@@ -216,8 +230,7 @@ internal class DomeHudContainer
         {
             _healthTextTMP.text = _domeHud.PlayState.health.ToString().PadLeft(3, '0');
         }
-
-        // here
+        
         FullComboState fcState = _domeHud._playState?.scoreState?.fullComboState ?? FullComboState.None;
         Color fcColor = Plugin.FcColor.Value.ToColor();
         Color pfcColor = Plugin.PfcColor.Value.ToColor();
