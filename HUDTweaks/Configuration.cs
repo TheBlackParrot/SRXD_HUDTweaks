@@ -82,6 +82,7 @@ public partial class Plugin
     internal static ConfigEntry<int> TimeBarWidth = null!;
     internal static ConfigEntry<int> MainHudVerticalOffset = null!;
 
+    internal static ConfigEntry<bool> EnableAccuracyBarShadow = null!;
     internal static ConfigEntry<int> AccuracyBarWidth = null!;
     internal static ConfigEntry<int> AccuracyBarVerticalOffset = null!;
     internal static ConfigEntry<int> MaximumAccuracyBarNotes = null!;
@@ -223,6 +224,9 @@ public partial class Plugin
             "Extra width for the time bar");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}", "Time bar extra width");
         
+        EnableAccuracyBarShadow = Config.Bind("General", nameof(EnableAccuracyBarShadow), true,
+            "Show the shadow behind the accuracy bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(EnableAccuracyBarShadow)}", "Show shadow behind accuracy bar");
         AccuracyBarVerticalOffset = Config.Bind("Offsets", nameof(AccuracyBarVerticalOffset), 0,
             "Vertical offset of the accuracy bar");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyBarVerticalOffset)}", "Accuracy bar vertical offset");
@@ -370,6 +374,17 @@ public partial class Plugin
             $"{TRANSLATION_PREFIX}{nameof(EnableWheelGrips)}", EnableWheelGrips.Value, value =>
             {
                 EnableWheelGrips.Value = value;
+                _ = RefreshEverythingGuh();
+            });
+        #endregion
+        
+        #region EnableAccuracyBarShadow
+        CustomGroup enableAccuracyBarShadowGroup = UIHelper.CreateGroup(modGroup, "EnableAccuracyBarShadowGroup");
+        enableAccuracyBarShadowGroup.LayoutDirection = Axis.Horizontal;
+        UIHelper.CreateSmallToggle(enableAccuracyBarShadowGroup, nameof(EnableAccuracyBarShadow),
+            $"{TRANSLATION_PREFIX}{nameof(EnableAccuracyBarShadow)}", EnableAccuracyBarShadow.Value, value =>
+            {
+                EnableAccuracyBarShadow.Value = value;
                 _ = RefreshEverythingGuh();
             });
         #endregion

@@ -67,6 +67,7 @@ internal class DomeHudContainer
     private readonly Transform _mainHudRightContainer;
 
     private readonly Transform _accuracyBarContainer;
+    internal readonly Transform AccuracyBarShadow;
     internal readonly HudTimingAccuracyBar HUDTimingAccuracyBar;
     internal readonly Transform AccuracyBarRectangles;
 
@@ -80,6 +81,7 @@ internal class DomeHudContainer
         _mainHudRightContainer = domeHud.warpTransform.Find("XMover/HudRect/RightContainer");
         
         _accuracyBarContainer = domeHud.wheelWarpTransform.Find("HudWheelRect/Accuracy Bar Container");
+        AccuracyBarShadow = _accuracyBarContainer.Find("Accuracy Bar Backing");
         HUDTimingAccuracyBar = _accuracyBarContainer.Find("Accuracy Bar").GetComponent<HudTimingAccuracyBar>();
         AccuracyBarRectangles = _accuracyBarContainer.Find("Rectangles");
         

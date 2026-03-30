@@ -215,8 +215,12 @@ public partial class Plugin : BaseUnityPlugin
             playStateContainer.WheelVisuals?.rightGripObject?.gameObject.SetActive(EnableWheelGrips.Value);
         }
 
-        foreach (DomeHud domeHud in DomeHudPatches.DomeHudContainers.Select(hudContainer => hudContainer.Key))
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator (this reads so poorly)
+        foreach (KeyValuePair<DomeHud, DomeHudContainer> hudContainer in DomeHudPatches.DomeHudContainers)
         {
+            DomeHud domeHud = hudContainer.Key;
+            DomeHudContainer container = hudContainer.Value;
+            
             // multiplier text
             domeHud.multiplier.transform.parent.gameObject.SetActive(EnableMultiplierText.Value);
 
@@ -225,6 +229,8 @@ public partial class Plugin : BaseUnityPlugin
 
             // score text
             domeHud.number.transform.parent.parent.gameObject.SetActive(EnableScore.Value);
+            
+            container.AccuracyBarShadow.gameObject.SetActive(EnableAccuracyBarShadow.Value);
 
             for (int i = 0; i < domeHud.healthBar.transform.parent.childCount; i++)
             {
