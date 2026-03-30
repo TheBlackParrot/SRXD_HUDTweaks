@@ -11,7 +11,6 @@ using HUDTweaks.Patches;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
-using Utility;
 
 namespace HUDTweaks;
 
@@ -257,25 +256,24 @@ public partial class Plugin : BaseUnityPlugin
             }
         }
     }
-    
-    internal static async Task UpdateAccuracyBar()
+
+    private static async Task UpdateAccuracyBar()
     {
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         foreach (KeyValuePair<DomeHud, DomeHudContainer> hudContainer in DomeHudPatches.DomeHudContainers)
         {
-            DomeHud hud = hudContainer.Key;
             DomeHudContainer container = hudContainer.Value;
             
-            while (container._hudTimingAccuracyBar == null)
+            while (container.HUDTimingAccuracyBar == null)
             {
                 await Awaitable.EndOfFrameAsync();
             }
             
-            container._hudTimingAccuracyBar._previousHitStates.Clear();
-            container._hudTimingAccuracyBar._previousHitStates = null;
-            container._hudTimingAccuracyBar.maxNotesDisplayed = MaximumAccuracyBarNotes.Value;
-            container._hudTimingAccuracyBar.DisposeMeshData();
-            container._hudTimingAccuracyBar.CreateMeshData();
+            container.HUDTimingAccuracyBar._previousHitStates.Clear();
+            container.HUDTimingAccuracyBar._previousHitStates = null;
+            container.HUDTimingAccuracyBar.maxNotesDisplayed = MaximumAccuracyBarNotes.Value;
+            container.HUDTimingAccuracyBar.DisposeMeshData();
+            container.HUDTimingAccuracyBar.CreateMeshData();
         }
     }
 
