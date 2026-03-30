@@ -16,6 +16,7 @@ namespace HUDTweaks;
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInDependency("srxd.raoul1808.spincore", "1.1.2")]
+[BepInIncompatibility("HitBarMove")]
 public partial class Plugin : BaseUnityPlugin
 {
     internal static ManualLogSource Log = null!;
