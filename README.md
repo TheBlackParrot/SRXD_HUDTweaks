@@ -17,17 +17,21 @@
   - Score
   - Track highlights/track strip
   - Wheel grips
+  - Accuracy bar shadow/outline
   - Hiding accuracy log rows for timings above a set threshold
 - Positional offsets:
   - Vertical position of the main HUD elements 
   - Vertical position of the track/chart info
-  - Width of the time bar
+  - Vertical position and width of the time bar
+  - Vertical position of the time bar
 - Augmented info displays:
   - The score label can be changed to show current accuracy and Perfect+ counts
   - The health label can be changed to show the current *precise* health value
-  - Time can be shown in beats, rather than minutes and seconds
+  - Time can be shown in beats or measures, rather than minutes and seconds
   - Track information can be changed using custom formatting tags
   - Overbeats can be counted as misses in the accuracy log
+  - Score can be displayed subtractively instead of cumulatively
+  - Accuracy bar ticks can be increased or decreased from the default of 8
 - Colors:
   - Bold numbers for combo and score values
   - Multiplier elements
@@ -36,6 +40,7 @@
   - Health elements
   - Hurt flash
   - PFC/FC indicators
+  - Accuracy judgements
 
 ## Dependencies
 - SpinCore
