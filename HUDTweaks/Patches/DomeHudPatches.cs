@@ -199,6 +199,8 @@ internal class DomeHudContainer
         }
     }
 
+    private int _lastSubtractiveScore;
+    private bool _isBeingHeld;
     internal void Update()
     {
         ScoreState? scoreState = _domeHud.PlayState.scoreState;
@@ -210,7 +212,15 @@ internal class DomeHudContainer
             
             if (_scoreTextNumber != null && Plugin.UseSubtractiveScoring.Value)
             {
-                _scoreTextNumber.desiredNumber = subtractiveScore;
+                WheelState wheelState = _domeHud.PlayState.wheelState;
+                if (!_isBeingHeld)
+                {
+                    // _isBeingHeld lets it have 1 frame on sliders at the least, drops will trigger it too
+                    _lastSubtractiveScore = subtractiveScore;
+                }
+
+                _isBeingHeld = (wheelState.IsBeingHeld || wheelState.beatAnimState == Wheel.BeatAnimationState.Held);
+                _scoreTextNumber.desiredNumber = _lastSubtractiveScore;
             }
 
             if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value)
