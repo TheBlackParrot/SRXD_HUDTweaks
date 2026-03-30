@@ -410,7 +410,7 @@ public partial class Plugin
                 MainHudVerticalOffset.Value = value;
                 _ = RefreshEverythingGuh();
             },
-            () => new IntRange(-10, 11),
+            () => new IntRange(-20, 21),
             v => v.ToString());
         #endregion
         
@@ -422,7 +422,7 @@ public partial class Plugin
                 TrackInfoVerticalOffset.Value = value;
                 _ = RefreshEverythingGuh();
             },
-            () => new IntRange(-10, 11),
+            () => new IntRange(-20, 21),
             v => v.ToString());
         #endregion
         
@@ -458,7 +458,7 @@ public partial class Plugin
                 AccuracyBarVerticalOffset.Value = value;
                 _ = RefreshEverythingGuh();
             },
-            () => new IntRange(-10, 11),
+            () => new IntRange(-20, 21),
             v => v.ToString());
         #endregion
         
