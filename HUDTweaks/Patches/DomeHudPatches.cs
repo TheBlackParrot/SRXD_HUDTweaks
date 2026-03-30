@@ -30,8 +30,6 @@ internal class DomeHudContainer
         { DlcAbbreviations.SP, "Supporter Pack DLC" },
         { DlcAbbreviations.IN, "Indie Pack DLC" }
     };
-
-    internal static int MaximumPossibleScore = 0; 
     
     private readonly DomeHud _domeHud;
     
@@ -207,19 +205,22 @@ internal class DomeHudContainer
 
         if (scoreState != null)
         {
+            int maximumPossibleScore = scoreState.noteData.maxScoreState.MaxPossibleScore;
+            int subtractiveScore = maximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4);
+            
             if (_scoreTextNumber != null && Plugin.UseSubtractiveScoring.Value)
             {
-                _scoreTextNumber.desiredNumber = MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4);
+                _scoreTextNumber.desiredNumber = subtractiveScore;
             }
 
             if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value)
             {
                 int currentScore = Plugin.UseSubtractiveScoring.Value
-                    ? MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4)
+                    ? subtractiveScore
                     : scoreState.TotalScore;
                 float accuracy = Plugin.UseSubtractiveScoring.Value
-                    ? (currentScore / (float)MaximumPossibleScore) * 100
-                    : (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
+                    ? (currentScore / (float)maximumPossibleScore) * 100
+                    : (currentScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
 
                 string accString = $"{(float.IsNaN(accuracy) || float.IsInfinity(accuracy) ? 100 : accuracy):0.00}%";
                 string perfectPlusString = Plugin.EnablePerfectPlusCount.Value
