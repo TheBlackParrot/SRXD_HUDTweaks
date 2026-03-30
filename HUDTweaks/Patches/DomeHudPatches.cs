@@ -312,12 +312,14 @@ internal class DomeHudContainer
         if (_trackInfoContainer == null ||
             _timeBarContainer == null ||
             _mainHudLeftContainer == null ||
-            _mainHudRightContainer == null)
+            _mainHudRightContainer == null ||
+            _accuracyBarContainer == null)
         {
             return;
         }
         
         int hudTrackInfoSetting = XROverridablePlayerSettings<HUDPlayerSettings>.Instance.HudTrackInfo.Value;
+        int accuracyBarPlacementSetting = XROverridablePlayerSettings<HUDPlayerSettings>.Instance.AccuracyBarPlacement.Value;
         
         // game's doing something finicky with alpha (and _trackInfoContainer's enabled state),
         // but if i set the text on the element, it overrides whatever the game's doing
@@ -335,6 +337,18 @@ internal class DomeHudContainer
         RectTransform rightBarTransform = _mainHudRightContainer.GetComponent<RectTransform>();
         rightBarTransform.offsetMin = rightBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
         rightBarTransform.offsetMax = rightBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
+        
+        RectTransform accuracyBarTransform = _accuracyBarContainer.GetComponent<RectTransform>();
+        accuracyBarTransform.sizeDelta = accuracyBarTransform.sizeDelta with { x = 250f + (300f * (Plugin.AccuracyBarWidth.Value / 10f)) };
+        float initialOffset = accuracyBarPlacementSetting switch
+        {
+            0 => -99999f,
+            1 => -83f,
+            2 => 300f,
+            _ => 0f
+        };
+        _accuracyBarContainer.localPosition =
+            _accuracyBarContainer.localPosition with { y = initialOffset + (Plugin.AccuracyBarVerticalOffset.Value * 4) };
     }
 }
 

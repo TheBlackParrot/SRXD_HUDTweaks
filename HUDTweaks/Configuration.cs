@@ -81,6 +81,8 @@ public partial class Plugin
     internal static ConfigEntry<int> TimeBarWidth = null!;
     internal static ConfigEntry<int> MainHudVerticalOffset = null!;
 
+    internal static ConfigEntry<int> AccuracyBarWidth = null!;
+    internal static ConfigEntry<int> AccuracyBarVerticalOffset = null!;
     internal static ConfigEntry<int> MaximumAccuracyBarNotes = null!;
 
     private void RegisterConfigEntries()
@@ -217,6 +219,12 @@ public partial class Plugin
             "Extra width for the time bar");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}", "Time bar extra width");
         
+        AccuracyBarVerticalOffset = Config.Bind("Offsets", nameof(AccuracyBarVerticalOffset), 0,
+            "Vertical offset of the accuracy bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyBarVerticalOffset)}", "Accuracy bar vertical offset");
+        AccuracyBarWidth = Config.Bind("Offsets", nameof(AccuracyBarWidth), 0,
+            "Extra width for the accuracy bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyBarWidth)}", "Accuracy bar extra width");
         MaximumAccuracyBarNotes = Config.Bind("General", nameof(MaximumAccuracyBarNotes), 8,
             "Amount of notes for the accuracy bar to keep track of");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(MaximumAccuracyBarNotes)}", "Accuracy bar note ticks");
@@ -405,6 +413,30 @@ public partial class Plugin
             TimeBarWidth.Value, (value) =>
             {
                 TimeBarWidth.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(-10, 11),
+            v => v.ToString());
+        #endregion
+        
+        #region AccuracyBarWidth
+        CustomGroup accuracyBarWidthGroup = UIHelper.CreateGroup(modGroup, "AccuracyBarWidthGroup");
+        UIHelper.CreateSmallMultiChoiceButton(accuracyBarWidthGroup, nameof(AccuracyBarWidth), $"{TRANSLATION_PREFIX}{nameof(AccuracyBarWidth)}",
+            AccuracyBarWidth.Value, (value) =>
+            {
+                AccuracyBarWidth.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(-6, 11),
+            v => v.ToString());
+        #endregion
+        
+        #region AccuracyBarVerticalOffset
+        CustomGroup accuracyBarVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "AccuracyBarVerticalOffsetGroup");
+        UIHelper.CreateSmallMultiChoiceButton(accuracyBarVerticalOffsetGroup, nameof(AccuracyBarVerticalOffset), $"{TRANSLATION_PREFIX}{nameof(AccuracyBarVerticalOffset)}",
+            AccuracyBarVerticalOffset.Value, (value) =>
+            {
+                AccuracyBarVerticalOffset.Value = value;
                 _ = RefreshEverythingGuh();
             },
             () => new IntRange(-10, 11),
