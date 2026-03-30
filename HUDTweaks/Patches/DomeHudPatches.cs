@@ -204,28 +204,32 @@ internal class DomeHudContainer
     internal void Update()
     {
         ScoreState? scoreState = _domeHud.PlayState.scoreState;
-        
-        if (_scoreTextNumber != null && Plugin.UseSubtractiveScoring.Value && scoreState != null)
-        {
-            _scoreTextNumber.desiredNumber = MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4);
-        }
-        if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value && scoreState != null)
-        {
-            int currentScore = Plugin.UseSubtractiveScoring.Value
-                ? MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4)
-                : scoreState.TotalScore;
-            float accuracy = Plugin.UseSubtractiveScoring.Value
-                ? (currentScore / (float)MaximumPossibleScore) * 100
-                : (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
 
-            string accString = $"{(float.IsNaN(accuracy) || float.IsInfinity(accuracy) ? 100 : accuracy):0.00}%";
-            string perfectPlusString = Plugin.EnablePerfectPlusCount.Value
-                ? $" <alpha=#80>({scoreState.CurrentTotals.flawlessPlusCount})"
-                : "";
+        if (scoreState != null)
+        {
+            if (_scoreTextNumber != null && Plugin.UseSubtractiveScoring.Value)
+            {
+                _scoreTextNumber.desiredNumber = MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4);
+            }
 
-            _scoreTextTMP.text = $"{accString}{perfectPlusString}";
+            if (_scoreTextTMP != null && Plugin.EnableAccuracyDisplay.Value)
+            {
+                int currentScore = Plugin.UseSubtractiveScoring.Value
+                    ? MaximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4)
+                    : scoreState.TotalScore;
+                float accuracy = Plugin.UseSubtractiveScoring.Value
+                    ? (currentScore / (float)MaximumPossibleScore) * 100
+                    : (scoreState.TotalScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
+
+                string accString = $"{(float.IsNaN(accuracy) || float.IsInfinity(accuracy) ? 100 : accuracy):0.00}%";
+                string perfectPlusString = Plugin.EnablePerfectPlusCount.Value
+                    ? $" <alpha=#80>({scoreState.CurrentTotals.flawlessPlusCount})"
+                    : "";
+
+                _scoreTextTMP.text = $"{accString}{perfectPlusString}";
+            }
         }
-        
+
         if (_healthTextTMP != null && Plugin.EnablePreciseHealth.Value)
         {
             _healthTextTMP.text = _domeHud.PlayState.health.ToString().PadLeft(3, '0');
