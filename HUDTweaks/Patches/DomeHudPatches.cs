@@ -347,9 +347,11 @@ internal class DomeHudContainer
         {
             return;
         }
-        
-        int hudTrackInfoSetting = XROverridablePlayerSettings<HUDPlayerSettings>.Instance.HudTrackInfo.Value;
-        int accuracyBarPlacementSetting = XROverridablePlayerSettings<HUDPlayerSettings>.Instance.AccuracyBarPlacement.Value;
+
+        HUDPlayerSettings playerSettings = XROverridablePlayerSettings<HUDPlayerSettings>.Instance;
+        int hudTrackInfoSetting = playerSettings.HudTrackInfo.Value;
+        int accuracyBarPlacementSetting = playerSettings.AccuracyBarPlacement.Value;
+        int timeBarPlacementSetting = playerSettings.TrackTimeBarPlacement.Value;
         
         // game's doing something finicky with alpha (and _trackInfoContainer's enabled state),
         // but if i set the text on the element, it overrides whatever the game's doing
@@ -360,6 +362,14 @@ internal class DomeHudContainer
         RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
         timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
         timeBarTransform.anchorMax = timeBarTransform.anchorMax with { x = 0.5f + (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
+        float timeBarInitialVerticalOffset = timeBarPlacementSetting switch
+        {
+            0 => -115f,
+            1 => 320f,
+            2 => 320f,
+            _ => -99999f
+        };
+        _timeBarContainer.localPosition = _timeBarContainer.localPosition with { y = timeBarInitialVerticalOffset + (Plugin.TimeBarVerticalOffset.Value * 4) };
         
         RectTransform leftBarTransform = _mainHudLeftContainer.GetComponent<RectTransform>();
         leftBarTransform.offsetMin = leftBarTransform.offsetMin with { y = -210f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };

@@ -80,6 +80,7 @@ public partial class Plugin
     
     internal static ConfigEntry<int> TrackInfoVerticalOffset = null!;
     internal static ConfigEntry<int> TimeBarWidth = null!;
+    internal static ConfigEntry<int> TimeBarVerticalOffset = null!;
     internal static ConfigEntry<int> MainHudVerticalOffset = null!;
 
     internal static ConfigEntry<bool> EnableAccuracyBarShadow = null!;
@@ -220,6 +221,9 @@ public partial class Plugin
         TrackInfoVerticalOffset = Config.Bind("Offsets", nameof(TrackInfoVerticalOffset), 0,
             "Vertical offset of the track/chart info");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TrackInfoVerticalOffset)}", "Track info vertical offset");
+        TimeBarVerticalOffset = Config.Bind("Offsets", nameof(TimeBarVerticalOffset), 0,
+            "Vertical offset of the time bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarVerticalOffset)}", "Time bar vertical offset");
         TimeBarWidth = Config.Bind("Offsets", nameof(TimeBarWidth), 0,
             "Extra width for the time bar");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}", "Time bar extra width");
@@ -420,6 +424,18 @@ public partial class Plugin
             TrackInfoVerticalOffset.Value, (value) =>
             {
                 TrackInfoVerticalOffset.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(-20, 21),
+            v => v.ToString());
+        #endregion
+        
+        #region TimeBarVerticalOffset
+        CustomGroup timeBarVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TimeBarVerticalOffsetGroup");
+        UIHelper.CreateSmallMultiChoiceButton(timeBarVerticalOffsetGroup, nameof(TimeBarVerticalOffset), $"{TRANSLATION_PREFIX}{nameof(TimeBarVerticalOffset)}",
+            TimeBarVerticalOffset.Value, (value) =>
+            {
+                TimeBarVerticalOffset.Value = value;
                 _ = RefreshEverythingGuh();
             },
             () => new IntRange(-20, 21),
