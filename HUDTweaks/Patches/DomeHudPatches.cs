@@ -379,7 +379,13 @@ internal class DomeHudContainer
         rightBarTransform.offsetMax = rightBarTransform.offsetMax with { y = 90f + (120f * (Plugin.MainHudVerticalOffset.Value / 10f)) };
         
         RectTransform accuracyBarTransform = _accuracyBarContainer.GetComponent<RectTransform>();
-        accuracyBarTransform.sizeDelta = accuracyBarTransform.sizeDelta with { x = 250f + (300f * (Plugin.AccuracyBarWidth.Value / 10f)) };
+        accuracyBarTransform.sizeDelta = accuracyBarTransform.sizeDelta with
+        {
+            x = 250f + (300f * (Plugin.AccuracyBarWidth.Value / 10f)),
+            y = 12f + (Plugin.AccuracyBarHeight.Value < 0
+                ? Mathf.Pow(Plugin.AccuracyBarHeight.Value / 3.5f, 2) * -1
+                : 50f * (Plugin.AccuracyBarHeight.Value / 10f))
+        };
         float initialOffset = accuracyBarPlacementSetting switch
         {
             0 => -99999f,

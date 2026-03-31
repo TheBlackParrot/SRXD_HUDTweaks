@@ -85,6 +85,7 @@ public partial class Plugin
 
     internal static ConfigEntry<bool> EnableAccuracyBarShadow = null!;
     internal static ConfigEntry<int> AccuracyBarWidth = null!;
+    internal static ConfigEntry<int> AccuracyBarHeight = null!;
     internal static ConfigEntry<int> AccuracyBarVerticalOffset = null!;
     internal static ConfigEntry<int> MaximumAccuracyBarNotes = null!;
 
@@ -237,6 +238,9 @@ public partial class Plugin
         AccuracyBarWidth = Config.Bind("Offsets", nameof(AccuracyBarWidth), 0,
             "Extra width for the accuracy bar");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyBarWidth)}", "Accuracy bar extra width");
+        AccuracyBarHeight = Config.Bind("Offsets", nameof(AccuracyBarHeight), 0,
+            "Extra height for the accuracy bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(AccuracyBarHeight)}", "Accuracy bar extra height");
         MaximumAccuracyBarNotes = Config.Bind("General", nameof(MaximumAccuracyBarNotes), 8,
             "Amount of notes for the accuracy bar to keep track of");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(MaximumAccuracyBarNotes)}", "Accuracy bar note ticks");
@@ -463,6 +467,18 @@ public partial class Plugin
                 _ = RefreshEverythingGuh();
             },
             () => new IntRange(-6, 11),
+            v => v.ToString());
+        #endregion
+        
+        #region AccuracyBarHeight
+        CustomGroup accuracyBarHeightGroup = UIHelper.CreateGroup(modGroup, "AccuracyBarHeightGroup");
+        UIHelper.CreateSmallMultiChoiceButton(accuracyBarHeightGroup, nameof(AccuracyBarHeight), $"{TRANSLATION_PREFIX}{nameof(AccuracyBarHeight)}",
+            AccuracyBarHeight.Value, (value) =>
+            {
+                AccuracyBarHeight.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(-10, 11),
             v => v.ToString());
         #endregion
         
