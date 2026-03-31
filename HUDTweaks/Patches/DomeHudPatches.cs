@@ -362,6 +362,12 @@ internal class DomeHudContainer
         RectTransform timeBarTransform = _timeBarContainer.GetComponent<RectTransform>();
         timeBarTransform.anchorMin = timeBarTransform.anchorMin with { x = 0.5f - (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
         timeBarTransform.anchorMax = timeBarTransform.anchorMax with { x = 0.5f + (0.06f * (Plugin.TimeBarWidth.Value / 10f)) };
+        timeBarTransform.sizeDelta = timeBarTransform.sizeDelta with
+        {
+            y = 10f + (Plugin.TimeBarHeight.Value < 0
+                ? Mathf.Pow(Plugin.TimeBarHeight.Value / 3.5f, 2) * -1
+                : 50f * (Plugin.TimeBarHeight.Value / 10f))
+        };
         float timeBarInitialVerticalOffset = timeBarPlacementSetting switch
         {
             0 => -115f,

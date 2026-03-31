@@ -80,6 +80,7 @@ public partial class Plugin
     
     internal static ConfigEntry<int> TrackInfoVerticalOffset = null!;
     internal static ConfigEntry<int> TimeBarWidth = null!;
+    internal static ConfigEntry<int> TimeBarHeight = null!;
     internal static ConfigEntry<int> TimeBarVerticalOffset = null!;
     internal static ConfigEntry<int> MainHudVerticalOffset = null!;
 
@@ -228,6 +229,9 @@ public partial class Plugin
         TimeBarWidth = Config.Bind("Offsets", nameof(TimeBarWidth), 0,
             "Extra width for the time bar");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}", "Time bar extra width");
+        TimeBarHeight = Config.Bind("Offsets", nameof(TimeBarHeight), 0,
+            "Extra height for the time bar");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(TimeBarHeight)}", "Time bar extra height");
         
         EnableAccuracyBarShadow = Config.Bind("General", nameof(EnableAccuracyBarShadow), true,
             "Show the shadow behind the accuracy bar");
@@ -434,18 +438,6 @@ public partial class Plugin
             v => v.ToString());
         #endregion
         
-        #region TimeBarVerticalOffset
-        CustomGroup timeBarVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TimeBarVerticalOffsetGroup");
-        UIHelper.CreateSmallMultiChoiceButton(timeBarVerticalOffsetGroup, nameof(TimeBarVerticalOffset), $"{TRANSLATION_PREFIX}{nameof(TimeBarVerticalOffset)}",
-            TimeBarVerticalOffset.Value, (value) =>
-            {
-                TimeBarVerticalOffset.Value = value;
-                _ = RefreshEverythingGuh();
-            },
-            () => new IntRange(-20, 21),
-            v => v.ToString());
-        #endregion
-        
         #region TimeBarWidth
         CustomGroup timeBarWidthGroup = UIHelper.CreateGroup(modGroup, "TimeBarWidthGroup");
         UIHelper.CreateSmallMultiChoiceButton(timeBarWidthGroup, nameof(TimeBarWidth), $"{TRANSLATION_PREFIX}{nameof(TimeBarWidth)}",
@@ -455,6 +447,30 @@ public partial class Plugin
                 _ = RefreshEverythingGuh();
             },
             () => new IntRange(-10, 11),
+            v => v.ToString());
+        #endregion
+        
+        #region TimeBarHeight
+        CustomGroup timeBarHeightGroup = UIHelper.CreateGroup(modGroup, "TimeBarHeightGroup");
+        UIHelper.CreateSmallMultiChoiceButton(timeBarHeightGroup, nameof(TimeBarHeight), $"{TRANSLATION_PREFIX}{nameof(TimeBarHeight)}",
+            TimeBarHeight.Value, (value) =>
+            {
+                TimeBarHeight.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(-10, 11),
+            v => v.ToString());
+        #endregion
+        
+        #region TimeBarVerticalOffset
+        CustomGroup timeBarVerticalOffsetGroup = UIHelper.CreateGroup(modGroup, "TimeBarVerticalOffsetGroup");
+        UIHelper.CreateSmallMultiChoiceButton(timeBarVerticalOffsetGroup, nameof(TimeBarVerticalOffset), $"{TRANSLATION_PREFIX}{nameof(TimeBarVerticalOffset)}",
+            TimeBarVerticalOffset.Value, (value) =>
+            {
+                TimeBarVerticalOffset.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(-20, 21),
             v => v.ToString());
         #endregion
         
