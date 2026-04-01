@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using BepInEx.Configuration;
 using HUDTweaks.Classes;
@@ -527,6 +529,7 @@ public partial class Plugin
             }
 
             NumberColor.Value = NumberColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(NumberColor)].color = NumberColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         numberColorInputR.InputField.SetText(NumberColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -539,6 +542,7 @@ public partial class Plugin
             }
 
             NumberColor.Value = NumberColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(NumberColor)].color = NumberColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         numberColorInputG.InputField.SetText(NumberColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -551,9 +555,13 @@ public partial class Plugin
             }
 
             NumberColor.Value = NumberColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(NumberColor)].color = NumberColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         numberColorInputB.InputField.SetText(NumberColor.Value.z.ToString(CultureInfo.InvariantCulture));
+
+        CreateColorPreviewElement(numberColorGroup, nameof(NumberColor));
+        PreviewImages[nameof(NumberColor)].color = NumberColor.Value.ToColor();
         #endregion
         
         #region TextColors
@@ -571,6 +579,7 @@ public partial class Plugin
             }
 
             TextColor.Value = TextColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(TextColor)].color = TextColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         textColorInputR.InputField.SetText(TextColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -583,6 +592,7 @@ public partial class Plugin
             }
 
             TextColor.Value = TextColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(TextColor)].color = TextColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         textColorInputG.InputField.SetText(TextColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -595,9 +605,13 @@ public partial class Plugin
             }
 
             TextColor.Value = TextColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(TextColor)].color = TextColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         textColorInputB.InputField.SetText(TextColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(textColorGroup, nameof(TextColor));
+        PreviewImages[nameof(TextColor)].color = TextColor.Value.ToColor();
         #endregion
         
         #region TimeColors
@@ -615,6 +629,7 @@ public partial class Plugin
             }
 
             TimeColor.Value = TimeColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(TimeColor)].color = TimeColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         timeColorInputR.InputField.SetText(TimeColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -627,6 +642,7 @@ public partial class Plugin
             }
 
             TimeColor.Value = TimeColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(TimeColor)].color = TimeColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         timeColorInputG.InputField.SetText(TimeColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -639,9 +655,13 @@ public partial class Plugin
             }
 
             TimeColor.Value = TimeColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(TimeColor)].color = TimeColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         timeColorInputB.InputField.SetText(TimeColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(timeColorGroup, nameof(TimeColor));
+        PreviewImages[nameof(TimeColor)].color = TimeColor.Value.ToColor();
         #endregion
         
         #region HealthColors
@@ -659,6 +679,7 @@ public partial class Plugin
             }
 
             HealthColor.Value = HealthColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(HealthColor)].color = HealthColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         healthColorInputR.InputField.SetText(HealthColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -671,6 +692,7 @@ public partial class Plugin
             }
 
             HealthColor.Value = HealthColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(HealthColor)].color = HealthColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         healthColorInputG.InputField.SetText(HealthColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -683,9 +705,13 @@ public partial class Plugin
             }
 
             HealthColor.Value = HealthColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(HealthColor)].color = HealthColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         healthColorInputB.InputField.SetText(HealthColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(healthColorGroup, nameof(HealthColor));
+        PreviewImages[nameof(HealthColor)].color = HealthColor.Value.ToColor();
         #endregion
         
         #region HurtColors
@@ -703,6 +729,7 @@ public partial class Plugin
             }
 
             HurtColor.Value = HurtColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(HurtColor)].color = HurtColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         hurtColorInputR.InputField.SetText(HurtColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -715,6 +742,7 @@ public partial class Plugin
             }
 
             HurtColor.Value = HurtColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(HurtColor)].color = HurtColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         hurtColorInputG.InputField.SetText(HurtColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -727,9 +755,13 @@ public partial class Plugin
             }
 
             HurtColor.Value = HurtColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(HurtColor)].color = HurtColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         hurtColorInputB.InputField.SetText(HurtColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(hurtColorGroup, nameof(HurtColor));
+        PreviewImages[nameof(HurtColor)].color = HurtColor.Value.ToColor();
         #endregion
         
         #region PfcColors
@@ -747,6 +779,7 @@ public partial class Plugin
             }
 
             PfcColor.Value = PfcColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(PfcColor)].color = PfcColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         pfcColorInputR.InputField.SetText(PfcColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -759,6 +792,7 @@ public partial class Plugin
             }
 
             PfcColor.Value = PfcColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(PfcColor)].color = PfcColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         pfcColorInputG.InputField.SetText(PfcColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -771,9 +805,13 @@ public partial class Plugin
             }
 
             PfcColor.Value = PfcColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(PfcColor)].color = PfcColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         pfcColorInputB.InputField.SetText(PfcColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(pfcColorGroup, nameof(PfcColor));
+        PreviewImages[nameof(PfcColor)].color = PfcColor.Value.ToColor();
         #endregion
         
         #region FcColors
@@ -791,6 +829,7 @@ public partial class Plugin
             }
 
             FcColor.Value = FcColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(FcColor)].color = FcColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         fcColorInputR.InputField.SetText(FcColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -803,6 +842,7 @@ public partial class Plugin
             }
 
             FcColor.Value = FcColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(FcColor)].color = FcColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         fcColorInputG.InputField.SetText(FcColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -815,9 +855,13 @@ public partial class Plugin
             }
 
             FcColor.Value = FcColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(FcColor)].color = FcColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         fcColorInputB.InputField.SetText(FcColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(fcColorGroup, nameof(FcColor));
+        PreviewImages[nameof(FcColor)].color = FcColor.Value.ToColor();
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "MultiplierColorsHeader", $"{TRANSLATION_PREFIX}MultiplierColors", false);
@@ -837,6 +881,7 @@ public partial class Plugin
             }
 
             Multiplier1XColor.Value = Multiplier1XColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier1XColor)].color = Multiplier1XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier1XColorInputR.InputField.SetText(Multiplier1XColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -849,6 +894,7 @@ public partial class Plugin
             }
 
             Multiplier1XColor.Value = Multiplier1XColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier1XColor)].color = Multiplier1XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier1XColorInputG.InputField.SetText(Multiplier1XColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -861,9 +907,13 @@ public partial class Plugin
             }
 
             Multiplier1XColor.Value = Multiplier1XColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier1XColor)].color = Multiplier1XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier1XColorInputB.InputField.SetText(Multiplier1XColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(multiplier1XColorGroup, nameof(Multiplier1XColor));
+        PreviewImages[nameof(Multiplier1XColor)].color = Multiplier1XColor.Value.ToColor();
         #endregion
         
         #region Multiplier2XColors
@@ -881,6 +931,7 @@ public partial class Plugin
             }
 
             Multiplier2XColor.Value = Multiplier2XColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier2XColor)].color = Multiplier2XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier2XColorInputR.InputField.SetText(Multiplier2XColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -893,6 +944,7 @@ public partial class Plugin
             }
 
             Multiplier2XColor.Value = Multiplier2XColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier2XColor)].color = Multiplier2XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier2XColorInputG.InputField.SetText(Multiplier2XColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -905,9 +957,13 @@ public partial class Plugin
             }
 
             Multiplier2XColor.Value = Multiplier2XColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier2XColor)].color = Multiplier2XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier2XColorInputB.InputField.SetText(Multiplier2XColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(multiplier2XColorGroup, nameof(Multiplier2XColor));
+        PreviewImages[nameof(Multiplier2XColor)].color = Multiplier2XColor.Value.ToColor();
         #endregion
         
         #region Multiplier3XColors
@@ -925,6 +981,7 @@ public partial class Plugin
             }
 
             Multiplier3XColor.Value = Multiplier3XColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier3XColor)].color = Multiplier3XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier3XColorInputR.InputField.SetText(Multiplier3XColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -937,6 +994,7 @@ public partial class Plugin
             }
 
             Multiplier3XColor.Value = Multiplier3XColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier3XColor)].color = Multiplier3XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier3XColorInputG.InputField.SetText(Multiplier3XColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -949,9 +1007,13 @@ public partial class Plugin
             }
 
             Multiplier3XColor.Value = Multiplier3XColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier3XColor)].color = Multiplier3XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier3XColorInputB.InputField.SetText(Multiplier3XColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(multiplier3XColorGroup, nameof(Multiplier3XColor));
+        PreviewImages[nameof(Multiplier3XColor)].color = Multiplier3XColor.Value.ToColor();
         #endregion
         
         #region Multiplier4XColors
@@ -969,6 +1031,7 @@ public partial class Plugin
             }
 
             Multiplier4XColor.Value = Multiplier4XColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier4XColor)].color = Multiplier4XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier4XColorInputR.InputField.SetText(Multiplier4XColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -981,6 +1044,7 @@ public partial class Plugin
             }
 
             Multiplier4XColor.Value = Multiplier4XColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier4XColor)].color = Multiplier4XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier4XColorInputG.InputField.SetText(Multiplier4XColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -993,9 +1057,13 @@ public partial class Plugin
             }
 
             Multiplier4XColor.Value = Multiplier4XColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(Multiplier4XColor)].color = Multiplier4XColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         multiplier4XColorInputB.InputField.SetText(Multiplier4XColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(multiplier4XColorGroup, nameof(Multiplier4XColor));
+        PreviewImages[nameof(Multiplier4XColor)].color = Multiplier4XColor.Value.ToColor();
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "TimingColorsHeader", $"{TRANSLATION_PREFIX}TimingColors", false);
@@ -1015,6 +1083,7 @@ public partial class Plugin
             }
 
             AccuracyMissColor.Value = AccuracyMissColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyMissColor)].color = AccuracyMissColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyMissColorInputR.InputField.SetText(AccuracyMissColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -1027,6 +1096,7 @@ public partial class Plugin
             }
 
             AccuracyMissColor.Value = AccuracyMissColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyMissColor)].color = AccuracyMissColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyMissColorInputG.InputField.SetText(AccuracyMissColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -1039,9 +1109,13 @@ public partial class Plugin
             }
 
             AccuracyMissColor.Value = AccuracyMissColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyMissColor)].color = AccuracyMissColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyMissColorInputB.InputField.SetText(AccuracyMissColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(accuracyMissColorGroup, nameof(AccuracyMissColor));
+        PreviewImages[nameof(AccuracyMissColor)].color = AccuracyMissColor.Value.ToColor();
         #endregion
         
         #region AccuracyOkayColors
@@ -1059,6 +1133,7 @@ public partial class Plugin
             }
 
             AccuracyOkayColor.Value = AccuracyOkayColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyOkayColor)].color = AccuracyOkayColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyOkayColorInputR.InputField.SetText(AccuracyOkayColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -1071,6 +1146,7 @@ public partial class Plugin
             }
 
             AccuracyOkayColor.Value = AccuracyOkayColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyOkayColor)].color = AccuracyOkayColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyOkayColorInputG.InputField.SetText(AccuracyOkayColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -1083,9 +1159,13 @@ public partial class Plugin
             }
 
             AccuracyOkayColor.Value = AccuracyOkayColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyOkayColor)].color = AccuracyOkayColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyOkayColorInputB.InputField.SetText(AccuracyOkayColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(accuracyOkayColorGroup, nameof(AccuracyOkayColor));
+        PreviewImages[nameof(AccuracyOkayColor)].color = AccuracyOkayColor.Value.ToColor();
         #endregion
         
         #region AccuracyGoodColors
@@ -1103,6 +1183,7 @@ public partial class Plugin
             }
 
             AccuracyGoodColor.Value = AccuracyGoodColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyGoodColor)].color = AccuracyGoodColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyGoodColorInputR.InputField.SetText(AccuracyGoodColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -1115,6 +1196,7 @@ public partial class Plugin
             }
 
             AccuracyGoodColor.Value = AccuracyGoodColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyGoodColor)].color = AccuracyGoodColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyGoodColorInputG.InputField.SetText(AccuracyGoodColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -1127,9 +1209,13 @@ public partial class Plugin
             }
 
             AccuracyGoodColor.Value = AccuracyGoodColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyGoodColor)].color = AccuracyGoodColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyGoodColorInputB.InputField.SetText(AccuracyGoodColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(accuracyGoodColorGroup, nameof(AccuracyGoodColor));
+        PreviewImages[nameof(AccuracyGoodColor)].color = AccuracyGoodColor.Value.ToColor();
         #endregion
         
         #region AccuracyGreatColors
@@ -1147,6 +1233,7 @@ public partial class Plugin
             }
 
             AccuracyGreatColor.Value = AccuracyGreatColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyGreatColor)].color = AccuracyGreatColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyGreatColorInputR.InputField.SetText(AccuracyGreatColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -1159,6 +1246,7 @@ public partial class Plugin
             }
 
             AccuracyGreatColor.Value = AccuracyGreatColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyGreatColor)].color = AccuracyGreatColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyGreatColorInputG.InputField.SetText(AccuracyGreatColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -1171,9 +1259,13 @@ public partial class Plugin
             }
 
             AccuracyGreatColor.Value = AccuracyGreatColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyGreatColor)].color = AccuracyGreatColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyGreatColorInputB.InputField.SetText(AccuracyGreatColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(accuracyGreatColorGroup, nameof(AccuracyGreatColor));
+        PreviewImages[nameof(AccuracyGreatColor)].color = AccuracyGreatColor.Value.ToColor();
         #endregion
         
         #region AccuracyPerfectColors
@@ -1191,6 +1283,7 @@ public partial class Plugin
             }
 
             AccuracyPerfectColor.Value = AccuracyPerfectColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyPerfectColor)].color = AccuracyPerfectColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyPerfectColorInputR.InputField.SetText(AccuracyPerfectColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -1203,6 +1296,7 @@ public partial class Plugin
             }
 
             AccuracyPerfectColor.Value = AccuracyPerfectColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyPerfectColor)].color = AccuracyPerfectColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyPerfectColorInputG.InputField.SetText(AccuracyPerfectColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -1215,9 +1309,13 @@ public partial class Plugin
             }
 
             AccuracyPerfectColor.Value = AccuracyPerfectColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyPerfectColor)].color = AccuracyPerfectColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyPerfectColorInputB.InputField.SetText(AccuracyPerfectColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(accuracyPerfectColorGroup, nameof(AccuracyPerfectColor));
+        PreviewImages[nameof(AccuracyPerfectColor)].color = AccuracyPerfectColor.Value.ToColor();
         #endregion
         
         #region AccuracyPerfectPlusColors
@@ -1235,6 +1333,7 @@ public partial class Plugin
             }
 
             AccuracyPerfectPlusColor.Value = AccuracyPerfectPlusColor.Value with { x = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyPerfectPlusColor)].color = AccuracyPerfectPlusColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyPerfectPlusColorInputR.InputField.SetText(AccuracyPerfectPlusColor.Value.x.ToString(CultureInfo.InvariantCulture));
@@ -1247,6 +1346,7 @@ public partial class Plugin
             }
 
             AccuracyPerfectPlusColor.Value = AccuracyPerfectPlusColor.Value with { y = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyPerfectPlusColor)].color = AccuracyPerfectPlusColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyPerfectPlusColorInputG.InputField.SetText(AccuracyPerfectPlusColor.Value.y.ToString(CultureInfo.InvariantCulture));
@@ -1259,9 +1359,13 @@ public partial class Plugin
             }
 
             AccuracyPerfectPlusColor.Value = AccuracyPerfectPlusColor.Value with { z = Math.Max(value, 0f) };
+            PreviewImages[nameof(AccuracyPerfectPlusColor)].color = AccuracyPerfectPlusColor.Value.ToColor();
             _ = RefreshEverythingGuh();
         });
         accuracyPerfectPlusColorInputB.InputField.SetText(AccuracyPerfectPlusColor.Value.z.ToString(CultureInfo.InvariantCulture));
+        
+        CreateColorPreviewElement(accuracyPerfectPlusColorGroup, nameof(AccuracyPerfectPlusColor));
+        PreviewImages[nameof(AccuracyPerfectPlusColor)].color = AccuracyPerfectPlusColor.Value.ToColor();
         #endregion
         
         UIHelper.CreateSectionHeader(modGroup, "ExtrasHeader", $"{TRANSLATION_PREFIX}Extras", false);
@@ -1450,5 +1554,27 @@ public partial class Plugin
         CreateReferenceTagRow(modGroup, "NewLineCharacter", @"\\n");
         CreateReferenceTagRow(modGroup, "TabCharacter", @"\\t");
         #endregion
+    }
+
+    private static Texture2D? _previewTexture;
+    private static readonly Dictionary<string, Material> PreviewImages = [];
+    private static void CreateColorPreviewElement(CustomGroup group, string settingName)
+    {
+        if (_previewTexture == null)
+        {
+            _previewTexture = Resources.FindObjectsOfTypeAll<Texture2D>().First(x => x.name == "Hexagon");
+        }
+        
+        CustomImage previewImage = UIHelper.CreateImage(group, $"{settingName}Preview", _previewTexture);
+        LayoutElement previewLayoutElement = previewImage.GameObject.GetComponent<LayoutElement>();
+        previewLayoutElement.preferredHeight = 50f;
+        RectTransform previewImageRectTransform = previewImage.Transform.GetChild(0).GetComponent<RectTransform>();
+        previewImageRectTransform.sizeDelta = new Vector2(50f, 50f);
+
+        SlantedRectangle slantedRectangle = previewImage.Transform.GetChild(0).GetComponent<SlantedRectangle>();
+        Material material = new(Resources.FindObjectsOfTypeAll<Shader>().First(x => x.name == "UI/Slanted Rectangle"));
+        slantedRectangle.material = material;
+        
+        PreviewImages.Add(settingName, material);
     }
 }
