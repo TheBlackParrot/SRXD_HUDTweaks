@@ -203,14 +203,15 @@ internal class DomeHudContainer
 
     private int _lastSubtractiveScore;
     private bool _isBeingHeld;
+    internal static int MaximumPossibleScore;
     internal void Update()
     {
         ScoreState? scoreState = _domeHud.PlayState.scoreState;
 
         if (scoreState != null)
         {
-            int maximumPossibleScore = scoreState.noteData.maxScoreState.MaxPossibleScore;
-            int subtractiveScore = maximumPossibleScore - (scoreState.CurrentTotals.baseScoreLost * 4);
+            int difference = ((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4) - scoreState.TotalScore;
+            int subtractiveScore = MaximumPossibleScore - difference;
             
             if (_scoreTextNumber != null && Plugin.UseSubtractiveScoring.Value)
             {
@@ -231,7 +232,7 @@ internal class DomeHudContainer
                     ? subtractiveScore
                     : scoreState.TotalScore;
                 float accuracy = Plugin.UseSubtractiveScoring.Value
-                    ? (currentScore / (float)maximumPossibleScore) * 100
+                    ? (currentScore / (float)MaximumPossibleScore) * 100
                     : (currentScore / (float)((scoreState.CurrentTotals.baseScore + scoreState.CurrentTotals.baseScoreLost) * 4)) * 100;
 
                 string accString = $"{(float.IsNaN(accuracy) || float.IsInfinity(accuracy) ? 100 : accuracy):0.00}%";
