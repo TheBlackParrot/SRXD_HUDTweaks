@@ -276,9 +276,14 @@ public partial class Plugin : BaseUnityPlugin
                 await Awaitable.EndOfFrameAsync();
             }
             
+            container.HUDTimingAccuracyBar.maxNotesDisplayed = MaximumAccuracyBarNotes.Value;
+            if (container.HUDTimingAccuracyBar._previousHitStates == null)
+            {
+                return;
+            }
+            
             container.HUDTimingAccuracyBar._previousHitStates.Clear();
             container.HUDTimingAccuracyBar._previousHitStates = null;
-            container.HUDTimingAccuracyBar.maxNotesDisplayed = MaximumAccuracyBarNotes.Value;
             container.HUDTimingAccuracyBar.DisposeMeshData();
             container.HUDTimingAccuracyBar.CreateMeshData();
         }
