@@ -42,6 +42,7 @@ internal class DomeHudContainer
     private readonly CustomTextMeshPro _healthTextTMP;
     internal readonly MeshRenderer HealthTextMeshRenderer;
 
+    private readonly TextNumber _comboTextNumber;
     internal readonly MeshRenderer ComboTextMeshRenderer;
 
     internal readonly MeshRenderer InfoTextMeshRenderer;
@@ -95,7 +96,8 @@ internal class DomeHudContainer
         _healthTextTMP = _healthText.GetComponent<CustomTextMeshPro>();
         HealthTextMeshRenderer = _healthText.GetComponent<MeshRenderer>();
         _healthText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
-        
+
+        _comboTextNumber = domeHud.streak;
         Transform comboText = domeHud.streak.transform.parent.parent.Find("StreakText");
         ComboTextMeshRenderer = comboText.GetComponent<MeshRenderer>();
         comboText.GetComponent<HdrMeshEffect>().Palette = Plugin.WhitePalette;
@@ -403,6 +405,17 @@ internal class DomeHudContainer
         _accuracyBarContainer.localPosition =
             _accuracyBarContainer.localPosition with { y = initialOffset + (Plugin.AccuracyBarVerticalOffset.Value * 4) };
     }
+
+    public void UpdateTextNumberFriction()
+    {
+        if (_scoreTextNumber == null || _comboTextNumber == null)
+        {
+            return;
+        }
+
+        _scoreTextNumber.friction = 1 - (Plugin.ScoreNumberFriction.Value / 20f);
+        _comboTextNumber.friction = 1 - (Plugin.ComboNumberFriction.Value / 20f);
+    }
 }
 
 [HarmonyPatch]
@@ -622,6 +635,14 @@ internal static class DomeHudPatches
         foreach (KeyValuePair<DomeHud, DomeHudContainer> container in DomeHudContainers)
         {
             container.Value.UpdateOffsets();
+        }
+    }
+
+    internal static void UpdateTextNumberFriction()
+    {
+        foreach (KeyValuePair<DomeHud, DomeHudContainer> container in DomeHudContainers)
+        {
+            container.Value.UpdateTextNumberFriction();
         }
     }
     

@@ -302,5 +302,6 @@ public partial class Plugin : BaseUnityPlugin
         await DomeHudPatches.ResetTranslatedTexts();
         await UpdateColors();
         ColorSystem.Instance.AssignColorPalettes();
+        DomeHudPatches.UpdateTextNumberFriction();
     }
 }

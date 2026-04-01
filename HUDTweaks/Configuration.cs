@@ -92,6 +92,9 @@ public partial class Plugin
     internal static ConfigEntry<int> AccuracyBarVerticalOffset = null!;
     internal static ConfigEntry<int> MaximumAccuracyBarNotes = null!;
 
+    internal static ConfigEntry<int> ComboNumberFriction = null!;
+    internal static ConfigEntry<int> ScoreNumberFriction = null!;
+
     private void RegisterConfigEntries()
     {
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}ModName", nameof(HUDTweaks));
@@ -101,6 +104,7 @@ public partial class Plugin
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}TimingColors", "Timing Judgement Colors");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Extras", "Extras");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Offsets", "Offsets");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}Animations", "Animations");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}GitHubButtonText", $"{nameof(HUDTweaks)} Releases (GitHub)");
         
         EnableAccuracyDisplay = Config.Bind("General", nameof(EnableAccuracyDisplay), false,
@@ -250,6 +254,13 @@ public partial class Plugin
         MaximumAccuracyBarNotes = Config.Bind("General", nameof(MaximumAccuracyBarNotes), 8,
             "Amount of notes for the accuracy bar to keep track of");
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(MaximumAccuracyBarNotes)}", "Accuracy bar note ticks");
+        
+        ComboNumberFriction = Config.Bind("Animations", nameof(ComboNumberFriction), 7,
+            "Animation speed for the combo number");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(ComboNumberFriction)}", "Combo number friction");
+        ScoreNumberFriction = Config.Bind("Animations", nameof(ScoreNumberFriction), 7,
+            "Animation speed for the score number");
+        TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}{nameof(ScoreNumberFriction)}", "Score number friction");
         
         TranslationHelper.AddTranslation($"{TRANSLATION_PREFIX}OtherToggles", "Track + Hud > Position contains visibility options available in the base game");
         
@@ -509,6 +520,32 @@ public partial class Plugin
                 _ = RefreshEverythingGuh();
             },
             () => new IntRange(-20, 21),
+            v => v.ToString());
+        #endregion
+        
+        UIHelper.CreateSectionHeader(modGroup, "AnimationsHeader", $"{TRANSLATION_PREFIX}Animations", false);
+        
+        #region ComboNumberFriction
+        CustomGroup comboNumberFrictionGroup = UIHelper.CreateGroup(modGroup, "ComboNumberFrictionGroup");
+        UIHelper.CreateSmallMultiChoiceButton(comboNumberFrictionGroup, nameof(ComboNumberFriction), $"{TRANSLATION_PREFIX}{nameof(ComboNumberFriction)}",
+            ComboNumberFriction.Value, (value) =>
+            {
+                ComboNumberFriction.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(0, 21),
+            v => v.ToString());
+        #endregion
+        
+        #region ScoreNumberFriction
+        CustomGroup scoreNumberFrictionGroup = UIHelper.CreateGroup(modGroup, "ScoreNumberFrictionGroup");
+        UIHelper.CreateSmallMultiChoiceButton(scoreNumberFrictionGroup, nameof(ScoreNumberFriction), $"{TRANSLATION_PREFIX}{nameof(ScoreNumberFriction)}",
+            ScoreNumberFriction.Value, (value) =>
+            {
+                ScoreNumberFriction.Value = value;
+                _ = RefreshEverythingGuh();
+            },
+            () => new IntRange(0, 21),
             v => v.ToString());
         #endregion
         
