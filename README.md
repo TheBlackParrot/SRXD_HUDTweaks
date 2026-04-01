@@ -41,6 +41,13 @@
   - Hurt flash
   - PFC/FC indicators
   - Accuracy judgements
+- Animations:
+  - Combo number animation speed
+  - Score number animation speed
 
 ## Dependencies
 - SpinCore
+
+## Mod Conflicts
+**If any of the mods listed below are present, HUDTweaks will not load.**
+- HitBarMove
