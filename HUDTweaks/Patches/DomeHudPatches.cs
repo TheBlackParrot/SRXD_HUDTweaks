@@ -224,7 +224,7 @@ internal class DomeHudContainer
                     _lastSubtractiveScore = subtractiveScore;
                 }
 
-                _isBeingHeld = (wheelState.IsBeingHeld || wheelState.beatAnimState == Wheel.BeatAnimationState.Held);
+                _isBeingHeld = (wheelState.IsBeingHeld || wheelState.beatAnimState == Wheel.BeatAnimationState.Held) && _domeHud.PlayState.multiplier == 4;
                 _scoreTextNumber.desiredNumber = _lastSubtractiveScore;
             }
 
